@@ -118,13 +118,13 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 <body>
 <!-- TOP PAGE -->
 <div id="topPage" class="page active">
-  <div class="app-header"><h1>⛩️ 葬祭問題集</h1><div class="sub">葬祭ディレクター技能審査対策 および 日常業務向上</div></div>
+  <div class="app-header"><h1>⛩️ 葬祭問題集</h1><div class="sub">葬祭ディレクター技能審査対策 および 日常業務向上</div><div class="sub" style="font-size:.75rem;opacity:.7;margin-top:2px">ver 3.0（全2501問：基本2001問 / 上級500問）</div></div>
   <div id="userSection"></div>
   <div class="card">
     <div class="section-title">📚 問題を解く</div>
     <div class="mode-btns">
-      <div class="mode-btn basic" onclick="startSetup('basic')"><div class="icon">📖</div><h3>基本問題</h3><div class="desc">Ch1〜8 / 1,966問</div></div>
-      <div class="mode-btn advanced" onclick="startSetup('advanced')"><div class="icon">🔥</div><h3>上級問題</h3><div class="desc">Ch9〜11 / 300問</div></div>
+      <div class="mode-btn basic" onclick="startSetup('basic')"><div class="icon">📖</div><h3>基本問題</h3><div class="desc" id="basicCount">Ch1〜8,12〜14 / 計算中...</div></div>
+      <div class="mode-btn advanced" onclick="startSetup('advanced')"><div class="icon">🔥</div><h3>上級問題</h3><div class="desc" id="advCount">Ch9〜11,15〜17 / 計算中...</div></div>
     </div>
   </div>
   <div class="card">
