@@ -89,6 +89,9 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 .feedback-icon{font-size:1.6rem;margin-bottom:5px}
 .feedback-title{font-size:.95rem;font-weight:800;margin-bottom:6px}
 .feedback-exp{font-size:.85rem;line-height:1.65;color:#444}
+.btn-report{background:#fff8e1;border:1.5px solid #ffa000;color:#e65100;font-size:.8rem;padding:7px 18px;border-radius:20px;cursor:pointer;font-weight:700;transition:all .2s}
+.btn-report:active{background:#ffe0b2}
+.btn-report.reported{background:#f5f5f5;border-color:#bdbdbd;color:#9e9e9e;pointer-events:none}
 .next-btn-wrap{text-align:center;margin-top:8px}
 /* Result */
 #resultPage{padding:16px}
@@ -128,6 +131,11 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
     <div class="section-title">📊 最近の学習</div>
     <div id="historyPreview"></div>
     <button class="btn btn-outline btn-sm" onclick="showPage('historyPage')" style="width:100%;margin-top:8px">すべての履歴を見る</button>
+  </div>
+  <div class="card" id="reportCardHome" style="display:none">
+    <div class="section-title">⚠️ 報告した問題</div>
+    <div id="reportCountHome" style="font-size:.88rem;color:#666;margin-bottom:8px"></div>
+    <button class="btn btn-outline btn-sm" onclick="showReportModal()" style="width:100%">報告一覧を見る・コピーする</button>
   </div>
 </div>
 
@@ -184,6 +192,9 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
       <div class="feedback-icon" id="feedIcon"></div>
       <div class="feedback-title" id="feedTitle"></div>
       <div class="feedback-exp" id="feedExp"></div>
+    </div>
+    <div style="text-align:center;margin:10px 0 4px">
+      <button class="btn-report" id="reportBtn" onclick="reportQuestion()">⚠️ この問題を報告（答えが間違っている等）</button>
     </div>
     <div class="next-btn-wrap"><button class="btn btn-primary" onclick="nextQuestion()">次の問題 →</button></div>
   </div>
@@ -3414,7 +3425,105 @@ function clearHistory(){
   }
 }
 
-document.addEventListener('DOMContentLoaded',renderTop);
+document.addEventListener('DOMContentLoaded',()=>{renderTop();updateReportCard();});
+
+/* REPORT */
+const REPORT_KEY='sosaiQuizApp_reports';
+
+function reportQuestion(){
+  const q=state.questions[state.current];
+  if(!q)return;
+  const chMap={1:'Ch1｜葬儀概論',2:'Ch2｜仏教儀礼',3:'Ch3｜神道儀礼',4:'Ch4｜キリスト教・その他',5:'Ch5｜法令',6:'Ch6｜マナー・礼儀',7:'Ch7｜接客・実務',8:'Ch8｜設備・衛生',9:'Ch9｜歴史・儀礼作法',10:'Ch10｜法令・マナー難問',11:'Ch11｜グリーフケア'};
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  const correctAns=q.type==='ox'?(q.answer===0?'○（正しい）':'×（誤り）'):['ア','イ','ウ','エ'][q.answer];
+  const entry={
+    date:new Date().toLocaleDateString('ja-JP'),
+    chapter:chMap[q.chapter]||('Ch'+q.chapter),
+    type:q.type==='ox'?'○×問題':'4択問題',
+    text:q.text,
+    answer:correctAns,
+    explanation:q.explanation||''
+  };
+  if(!reports.find(r=>r.text===entry.text)){
+    reports.push(entry);
+    localStorage.setItem(REPORT_KEY,JSON.stringify(reports));
+  }
+  const btn=document.getElementById('reportBtn');
+  if(btn){btn.textContent='✅ 報告しました';btn.classList.add('reported');}
+  updateReportCard();
+}
+
+function updateReportCard(){
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  const card=document.getElementById('reportCardHome');
+  const cnt=document.getElementById('reportCountHome');
+  if(!card)return;
+  if(reports.length>0){
+    card.style.display='block';
+    if(cnt)cnt.textContent='現在 '+reports.length+' 件の報告があります';
+  }else{
+    card.style.display='none';
+  }
+}
+
+function showReportModal(){
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  const list=document.getElementById('reportList');
+  if(reports.length===0){
+    list.innerHTML='<p style="text-align:center;color:#aaa;padding:24px">報告された問題はありません</p>';
+  }else{
+    list.innerHTML=reports.map((r,i)=>
+      '<div style="border:1px solid #eee;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:.82rem">'+
+      '<div style="color:#999;margin-bottom:5px">'+(i+1)+'. '+r.date+' | '+r.chapter+' | '+r.type+'</div>'+
+      '<div style="margin-bottom:4px"><b>問題:</b> '+r.text+'</div>'+
+      '<div style="margin-bottom:4px"><b>現在の正解設定:</b> '+r.answer+'</div>'+
+      '<div style="color:#555"><b>解説:</b> '+r.explanation+'</div>'+
+      '</div>'
+    ).join('');
+  }
+  document.getElementById('reportModal').style.display='flex';
+}
+
+function copyReports(){
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  if(!reports.length){alert('報告された問題がありません');return;}
+  const text='【報告問題一覧】\n\n'+reports.map((r,i)=>
+    (i+1)+'. ['+r.date+'] '+r.chapter+' '+r.type+'\n'+
+    '問題: '+r.text+'\n'+
+    '現在の正解設定: '+r.answer+'\n'+
+    '解説: '+r.explanation
+  ).join('\n\n');
+  navigator.clipboard.writeText(text)
+    .then(()=>alert('コピーしました！\nClaudeのチャットに貼り付けて「この問題を修正して」と送ってください。'))
+    .catch(()=>{
+      const ta=document.createElement('textarea');
+      ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+      alert('コピーしました！');
+    });
+}
+
+function clearReports(){
+  if(confirm('報告一覧をすべて削除しますか？')){
+    localStorage.removeItem(REPORT_KEY);
+    showReportModal();
+    updateReportCard();
+  }
+}
 </script>
+
+<!-- REPORT MODAL -->
+<div id="reportModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:82vh;overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between">
+      <h3 style="margin:0;font-size:1rem">⚠️ 報告した問題一覧</h3>
+      <button onclick="document.getElementById('reportModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;line-height:1">×</button>
+    </div>
+    <div id="reportList" style="overflow-y:auto;padding:12px;flex:1"></div>
+    <div style="padding:12px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="clearReports()" style="background:#fff5f5;border:1.5px solid #f44336;color:#f44336;border-radius:20px;padding:7px 14px;font-size:.82rem;font-weight:700;cursor:pointer">🗑️ 全削除</button>
+      <button onclick="copyReports()" class="btn btn-primary" style="font-size:.85rem;padding:8px 18px">📋 コピーしてClaudeへ</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
