@@ -2,9 +2,191 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>葬祭問題集</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>葬祭情報アプリ</title>
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--pk:#FF6B9D;--pk-bg:#FFF0F7;--lv:#9C6FD6;--lv-bg:#F3EEFF;--mt:#3DC9C0;--mt-bg:#EDFAF9;--pe:#FF8B6B;--pe-bg:#FFF2EE;--gd:#F5A623;--tx:#3D2B3D;--tx2:#8A7A8A;--sd:0 4px 20px rgba(156,111,214,.12);--r:20px;--rs:12px;}
+/* ===== ページ別カラーテーマ（お勉強エリアは対象外・既存配色を維持） ===== */
+body.theme-top{--pk:#4D9DE0;--pk-bg:#EAF4FF;--lv:#5C7CDB;--lv-bg:#ECEFFC;--mt:#3DC9C0;--mt-bg:#EDFAF9;--sd:0 4px 20px rgba(77,157,224,.14)}
+body.theme-jushoku{--pk:#43A788;--pk-bg:#EAF7F0;--lv:#2E8B6E;--lv-bg:#E1F3EA;--mt:#6FCF97;--mt-bg:#EAFBF1;--sd:0 4px 20px rgba(46,139,110,.14)}
+body.theme-shiko{--pk:#9C6FD6;--pk-bg:#F3EEFF;--lv:#7C4DC4;--lv-bg:#EDE3FA;--mt:#B68FE0;--mt-bg:#F6F0FC;--sd:0 4px 20px rgba(124,77,196,.14)}
+body{font-family:'Hiragino Kaku Gothic Pro','Yu Gothic',Meiryo,sans-serif;background:linear-gradient(135deg,var(--pk-bg) 0%,var(--lv-bg) 100%);min-height:100vh;color:var(--tx);font-size:14px;line-height:1.6;transition:background .35s}
+.app-hd{background:linear-gradient(135deg,var(--pk),var(--lv));color:#fff;padding:14px 16px 10px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(255,107,157,.3);transition:background .35s}
+body.theme-top .app-hd{box-shadow:0 4px 20px rgba(77,157,224,.35)}
+body.theme-jushoku .app-hd{box-shadow:0 4px 20px rgba(46,139,110,.35)}
+body.theme-shiko .app-hd{box-shadow:0 4px 20px rgba(124,77,196,.35)}
+.app-hd h1{font-size:1.25rem;font-weight:700;letter-spacing:.05em}
+.app-hd .sub{font-size:.68rem;opacity:.85;margin-top:2px}
+.copy-hd{font-size:.62rem;opacity:.7;margin-top:3px}
+.page{display:none;padding:16px 14px 100px;max-width:680px;margin:0 auto}
+.page.active{display:block}
+.top-hero{text-align:center;padding:28px 0 16px}
+.top-hero .emo{font-size:3.5rem;display:inline-block;animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.top-hero h2{font-size:1.35rem;font-weight:700;margin-top:10px}
+.top-hero p{color:var(--tx2);font-size:.82rem;margin-top:5px}
+.copy-top{text-align:center;margin-top:8px;font-size:.7rem;color:var(--lv);font-weight:600}
+.top-btns{display:flex;flex-direction:column;gap:14px;margin-top:24px}
+.top-btn{background:#fff;border:none;border-radius:var(--r);padding:20px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:var(--sd);transition:all .3s;text-align:left;width:100%}
+.top-btn:active{transform:scale(.97)}
+.top-btn .tico{font-size:2.2rem;border-radius:14px;width:58px;height:58px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.top-btn .ttx h3{font-size:1rem;font-weight:700;color:var(--tx)}
+.top-btn .ttx p{font-size:.75rem;color:var(--tx2);margin-top:2px}
+.top-btn .tarr{font-size:1.2rem;flex-shrink:0;margin-left:auto}
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-hd h2{font-size:1.05rem;font-weight:700}
+.back-btn{background:#fff;border:2px solid var(--pk);color:var(--pk);border-radius:50px;padding:6px 13px;font-size:.78rem;cursor:pointer;font-weight:600}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;margin-bottom:16px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:#fff;border:2px solid var(--pk);color:var(--pk);border-radius:50px;padding:7px 14px;font-size:.8rem;cursor:pointer;white-space:nowrap;font-weight:600;transition:all .2s;flex-shrink:0}
+.tab.active{background:var(--pk);color:#fff}
+.tab.mt{border-color:var(--mt);color:var(--mt)}
+.tab.mt.active{background:var(--mt);color:#fff}
+.tc{display:none}.tc.active{display:block}
+.card{background:#fff;border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sd)}
+.row{display:flex;gap:7px;margin-bottom:7px;align-items:flex-start}
+.lbl{background:var(--pk-bg);color:var(--pk);font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.lbl.lv{background:var(--lv-bg);color:var(--lv)}
+.val{font-size:.85rem;flex:1;color:var(--tx)}
+.note-box{background:#FFF8EC;border-left:3px solid var(--gd);border-radius:0 8px 8px 0;padding:8px 10px;font-size:.78rem;color:#6B5B2E;white-space:pre-line;margin-top:7px}
+.cer-tabs{display:flex;gap:7px;margin-bottom:12px}
+.cer-tab{border:2px solid;border-radius:20px;padding:5px 14px;font-size:.78rem;font-weight:700;cursor:pointer;background:#fff}
+.cer-tab.ty{border-color:var(--lv);color:var(--lv)}
+.cer-tab.ty.active{background:var(--lv);color:#fff}
+.cer-tab.sg{border-color:var(--pk);color:var(--pk)}
+.cer-tab.sg.active{background:var(--pk);color:#fff}
+.cer-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
+.cgi{background:#FAFAFA;border-radius:9px;padding:9px}
+.cgi .cl{font-size:.68rem;color:var(--tx2);font-weight:600;margin-bottom:2px}
+.cgi .cv{font-size:.82rem}
+.form-card{background:#fff;border-radius:var(--r);padding:18px;box-shadow:var(--sd);margin-bottom:12px}
+.form-card h3{font-size:.95rem;font-weight:700;margin-bottom:13px}
+.fg{margin-bottom:10px}
+.fg label{font-size:.78rem;font-weight:600;color:var(--tx2);margin-bottom:4px;display:block}
+.fi{width:100%;border:2px solid #E8DFF5;border-radius:var(--rs);padding:10px 12px;font-size:.9rem;outline:none;font-family:inherit}
+.fi:focus{border-color:var(--lv)}
+.fck{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.fck input{width:18px;height:18px;accent-color:var(--pk)}
+.fck label{font-size:.85rem;font-weight:600}
+.calc-btn{width:100%;background:linear-gradient(135deg,var(--pk),var(--lv));color:#fff;border:none;border-radius:50px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:4px}
+.res-box{background:linear-gradient(135deg,var(--pk-bg),var(--lv-bg));border-radius:var(--rs);padding:14px;margin-top:12px;display:none}
+.res-box.show{display:block}
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,107,157,.15)}
+.res-row:last-child{border:none}
+.res-row .rl{font-size:.8rem;color:var(--tx2)}
+.res-row .rv{font-size:.95rem;font-weight:700;color:var(--lv)}
+.res-row .rv.big{font-size:1.2rem;color:var(--pk)}
+.srch-wrap{position:relative;margin-bottom:12px}
+.srch-wrap input{width:100%;border:2px solid var(--mt);border-radius:50px;padding:10px 16px 10px 38px;font-size:.88rem;outline:none;background:#fff;font-family:inherit}
+.srch-wrap::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.9rem}
+.tcard{background:#fff;border-radius:var(--r);padding:14px;margin-bottom:9px;box-shadow:var(--sd);border-left:4px solid var(--mt)}
+.tname{font-size:1rem;font-weight:700}
+.tsect{font-size:.73rem;color:var(--lv);font-weight:600;margin-top:1px}
+.tcontacts{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.chip{background:var(--mt-bg);border-radius:20px;padding:4px 10px;font-size:.75rem;color:#2B7A76;display:flex;align-items:center;gap:3px}
+.chip.addr{background:var(--pk-bg);color:#7A2B5A}
+.tdetail{margin-top:10px;padding-top:10px;border-top:1px solid #F0F0F0;display:none}
+.tdetail.open{display:block}
+.exp-btn{background:none;border:1.5px solid var(--mt);color:var(--mt);border-radius:20px;padding:4px 12px;font-size:.73rem;cursor:pointer;margin-top:7px;font-weight:600}
+.etoolbar{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.ebtn{border:none;border-radius:50px;padding:7px 13px;font-size:.76rem;font-weight:600;cursor:pointer}
+.ebtn.pri{background:var(--pk);color:#fff}
+.ebtn.dan{background:#FFF0F0;color:#E05555;border:1.5px solid #E05555}
+.ebtn.grn{background:var(--mt-bg);color:var(--mt);border:1.5px solid var(--mt)}
+.efield{width:100%;border:1.5px solid var(--pk);border-radius:8px;padding:5px 9px;font-size:.8rem;margin-top:3px;font-family:inherit;resize:vertical;min-height:34px}
+.mb-sec{margin-bottom:18px}
+.mb-sec h4{font-size:.88rem;font-weight:700;margin-bottom:7px;padding:5px 11px;background:var(--mt-bg);border-radius:var(--rs);border-left:3px solid var(--mt)}
+.mbt{width:100%;border-collapse:collapse;font-size:.78rem}
+.mbt th{background:var(--mt);color:#fff;padding:7px 5px;text-align:center;font-weight:600}
+.mbt td{padding:6px 5px;text-align:center;border-bottom:1px solid #F0F0F0}
+.mbt tr:nth-child(even) td{background:var(--mt-bg)}
+.mbt .gp{font-weight:700;color:var(--lv)}
+.mbt .mp{font-weight:700;color:var(--pk)}
+.notice{background:var(--pe-bg);border-left:3px solid var(--pe);border-radius:0 var(--rs) var(--rs) 0;padding:9px 11px;font-size:.77rem;color:#7A4B2E;margin-bottom:12px}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -4px 20px rgba(156,111,214,.15);display:flex;padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px));z-index:100}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:5px 3px;cursor:pointer;border:none;background:none}
+.ni .nicon{font-size:1.4rem}
+.ni .nlbl{font-size:.62rem;font-weight:600;color:var(--tx2);margin-top:1px}
+.ni.active .nlbl{color:var(--pk)}
+.ostudy-btns{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+/* ===== テキスト学習 全体 ===== */
+.study-screen{display:none;flex-direction:column;height:100vh;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8f0ff;z-index:200;overflow:hidden}
+.study-screen.visible{display:flex}
+.study-hd{background:linear-gradient(135deg,var(--lv),var(--pk));color:#fff;padding:14px 14px 10px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.study-hd-back{background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:50%;width:36px;height:36px;font-size:1.1rem;cursor:pointer;flex-shrink:0}
+.study-hd-ttl{font-size:.95rem;font-weight:700}
+.study-hd-sub{font-size:.7rem;opacity:.8;margin-top:1px}
+/* コンテンツエリア */
+.study-body{flex:1;overflow-y:auto;padding:10px 10px 16px;-webkit-overflow-scrolling:touch}
+.study-ch{display:none}.study-ch.active{display:block}
+/* ボトムナビ */
+.st-bnav{display:flex;background:#fff;border-top:1px solid #e8d8f8;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
+.st-bnav-btn{flex:1;padding:7px 2px 5px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.55rem;font-weight:700;color:#b0a0c0;transition:.2s;min-width:0}
+.st-bnav-btn .sbn-icon{font-size:1.2rem;line-height:1}
+.st-bnav-btn.active{color:var(--lv)}
+.st-bnav-btn.active .sbn-icon{transform:scale(1.15)}
+/* アコーディオンカード (togglable) */
+.acc-card{background:#fff;border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 2px 10px rgba(156,111,214,.1)}
+.acc-head{display:flex;align-items:center;padding:13px 14px;gap:10px;cursor:pointer;justify-content:space-between}
+.acc-head-left{display:flex;align-items:center;gap:10px}
+.acc-icon-s{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;background:var(--lv-bg)}
+.acc-title-s{font-size:.88rem;font-weight:700;color:var(--tx)}
+.acc-arrow{color:var(--tx2);font-size:.8rem;transition:transform .3s;flex-shrink:0}
+.acc-card.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{display:none;padding:0 12px 12px;border-top:1px solid #f0e4ff}
+.acc-card.open .acc-body{display:block}
+/* 3Dフリップカード */
+.sw-flash-top{text-align:center;font-size:.78rem;color:var(--tx2);margin-bottom:10px;font-weight:700}
+.sw-flash-wrap{perspective:900px;margin:0 0 10px}
+.sw-flash-inner{position:relative;height:190px;transition:transform .4s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;cursor:pointer;border-radius:18px}
+.sw-flash-inner.flipped{transform:rotateY(180deg)}
+.sw-flash-f,.sw-flash-b{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:18px}
+.sw-flash-f{background:linear-gradient(145deg,var(--lv),#7a50c0)}
+.sw-flash-b{background:linear-gradient(145deg,#3a9e78,#2d7a5a);transform:rotateY(180deg)}
+.sw-flash-q{color:#fff;font-size:.92rem;font-weight:800;text-align:center;line-height:1.6}
+.sw-flash-a{color:#fff;font-size:1rem;font-weight:900;text-align:center;line-height:1.5}
+.sw-flash-note{color:rgba(255,255,255,.82);font-size:.72rem;text-align:center;margin-top:8px;line-height:1.5}
+.sw-flash-hint{text-align:center;font-size:.72rem;color:var(--tx2);margin-bottom:10px}
+.sw-flash-btns{display:flex;gap:8px;margin-bottom:10px}
+.sw-flash-btns button{flex:1;padding:13px;border:none;border-radius:12px;font-size:.88rem;font-weight:800;cursor:pointer}
+.sw-flash-prev{background:#f0e4ff;color:var(--lv)}
+.sw-flash-next{background:linear-gradient(135deg,var(--lv),var(--pk));color:#fff}
+.sw-flash-dots{display:flex;justify-content:center;gap:4px;margin-top:8px;flex-wrap:wrap}
+.sw-flash-dot{width:6px;height:6px;border-radius:50%;background:#e0d0f0;transition:.2s}
+.sw-flash-dot.cur{background:var(--lv);transform:scale(1.4)}
+/* 重要数字パネル */
+.s-num-sec{font-size:.72rem;font-weight:800;color:#fff;background:var(--lv);padding:5px 10px;border-radius:8px 8px 0 0;margin-top:12px}
+.s-num-card{background:#fff;border-radius:0 0 12px 12px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.s-num-row{display:flex;align-items:center;padding:9px 12px;border-bottom:1px solid #f5efff;gap:10px}
+.s-num-row:last-child{border-bottom:none}
+.s-num-badge{background:var(--pk);color:#fff;font-size:.75rem;font-weight:900;padding:4px 10px;border-radius:18px;white-space:nowrap;flex-shrink:0;min-width:72px;text-align:center}
+.s-num-badge.lv{background:var(--lv)}.s-num-badge.mt{background:#2a9d8f}.s-num-badge.pe{background:var(--pe)}
+.s-num-desc{font-size:.78rem;color:var(--tx);font-weight:600;line-height:1.5}
+.s-num-sub{font-size:.68rem;color:var(--tx2);margin-top:1px}
+.acc-card{background:#fff;border-radius:16px;margin-bottom:10px;box-shadow:0 3px 14px rgba(156,111,214,.1);overflow:hidden}
+.acc-head{display:flex;align-items:center;padding:13px 14px;gap:10px}
+.acc-head-left{display:flex;align-items:center;gap:10px}
+.acc-icon-s{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:var(--lv-bg)}
+.acc-title-s{font-size:.88rem;font-weight:700}
+.acc-body{padding:0 14px 14px;border-top:1px solid #F0E8FF}
+.s-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.8rem}
+.s-table th{background:var(--lv);color:#fff;padding:6px 8px;font-weight:600;text-align:left}
+.s-table td{padding:6px 8px;border-bottom:1px solid #F0E8FF}
+.s-table tr:nth-child(even) td{background:var(--lv-bg)}
+.s-p{font-size:.85rem;line-height:1.8;margin:6px 0}
+.s-memo{background:#FFF8EC;border-left:3px solid var(--gd);border-radius:0 8px 8px 0;padding:8px 10px;font-size:.78rem;color:#6B5B2E;margin-top:8px}
+.kv{background:var(--pk);color:#fff;padding:2px 8px;border-radius:20px;font-weight:700;font-size:.78rem;display:inline-block}
+.kv.lv{background:var(--lv)}
+.kv.green{background:var(--mt)}
+.flash-area{padding:4px 0}
+.flash-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 3px 14px rgba(156,111,214,.12);margin-bottom:10px;border-left:4px solid var(--lv);cursor:pointer;user-select:none}
+.flash-q{font-size:.88rem;font-weight:700;margin-bottom:4px}
+.flash-a{display:none;background:var(--lv-bg);border-radius:10px;padding:10px 12px;margin-top:8px}
+.flash-a.show{display:block}
+.flash-ans{font-size:.9rem;font-weight:700;color:var(--lv);margin-bottom:4px}
+.flash-note{font-size:.75rem;color:var(--tx2)}
+.flash-tap{font-size:.72rem;color:var(--tx2);font-style:italic;margin-top:4px}
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --pink:#ff6b9d;--purple:#c44dff;--blue:#4d9fff;--teal:#00d4aa;
@@ -12,7 +194,8 @@
   --bg:#f8f0ff;--card:#fff;--text:#333;--sub:#666;--light:#f0e8ff;
 }
 body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.page{display:none;min-height:100vh;padding:16px}
+.quiz-page{display:none;min-height:100vh;padding:16px}
+.quiz-page.active{display:block}
 .page.active{display:block}
 .app-header{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;text-align:center;padding:22px 16px 18px;border-radius:0 0 24px 24px;margin:-16px -16px 20px;box-shadow:0 4px 20px rgba(196,77,255,.35)}
 .app-header h1{font-size:1.7rem;font-weight:900;letter-spacing:.05em}
@@ -113,11 +296,688 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 .review-item.wrong-item{border-color:#f44336;background:#fff5f5}
 .review-item .rq{font-weight:600;margin-bottom:3px;color:#333}
 .review-item .ra{color:var(--sub);font-size:.78rem}
+
+/* ① 式典情報ナビ */
+.cer-nav-hd{display:flex;align-items:center;gap:10px;padding:6px 0 10px;border-bottom:1px solid rgba(156,111,214,.2);margin-bottom:10px}
+#shikiten-list-title{font-weight:700;color:var(--lv);font-size:.92rem;flex:1}
+.cer-detail-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 0 8px;margin-bottom:4px}
+.cer-detail-acts{display:flex;gap:6px}
+.temple-list-item{display:flex;align-items:center;background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:7px;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.08);transition:opacity .15s;user-select:none;-webkit-user-select:none}
+.temple-list-item:active{opacity:.6}
+.temple-list-name{flex:1;font-weight:600;color:var(--tx);font-size:.93rem}
+.temple-list-area{font-size:.72rem;color:var(--lv);background:var(--lv-bg);padding:2px 7px;border-radius:10px;margin-right:8px}
+.temple-list-arrow{color:var(--lv);font-size:1.15rem;font-weight:700}
+.back-btn-sm{background:var(--lv-bg);color:var(--lv);border:none;border-radius:8px;padding:5px 11px;font-size:.8rem;cursor:pointer;font-weight:600;flex-shrink:0}
+.ebtn.sm{padding:4px 9px!important;font-size:.78rem!important}
+/* モーダル共通 */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;display:flex;align-items:flex-end;justify-content:center}
+.modal-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,0)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid #eee;font-weight:700;font-size:1rem;color:var(--tx);position:sticky;top:0;background:#fff;z-index:1}
+.modal-body{padding:12px 16px}
+.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:10px 16px 16px;border-top:1px solid #eee}
+.modal-close{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--tx2);padding:0 4px;line-height:1}
+.sem-section{margin-bottom:14px;padding:10px 12px;background:var(--lv-bg);border-radius:10px}
+.sem-section h4{margin:0 0 8px;color:var(--lv);font-size:.85rem;font-weight:700}
+.sem-row{display:grid;grid-template-columns:80px 1fr;gap:5px;align-items:start;margin-bottom:5px}
+.sem-lbl{font-size:.78rem;color:var(--tx2);font-weight:600;padding-top:6px}
+.sem-input{border:1px solid #ddd;border-radius:7px;padding:5px 8px;font-size:.82rem;font-family:inherit;width:100%;box-sizing:border-box;resize:vertical}
+/* ② エリア管理 */
+.area-mgr-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+/* ③ テキスト編集 */
+.study-edit-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:4px 10px;font-size:.78rem;cursor:pointer;font-weight:600;flex-shrink:0}
+.study-edit-btn.active{background:#fff;color:var(--lv)}
+.acc-edit-btn{display:none;position:absolute;top:10px;right:44px;background:var(--pk-bg);color:var(--pk);border:1px solid var(--pk);border-radius:6px;padding:2px 7px;font-size:.7rem;cursor:pointer;font-weight:600;z-index:10;line-height:1.4}
+
 </style>
 </head>
 <body>
+<header class="app-hd">
+  <h1>⚘ 葬祭情報アプリ</h1>
+  <div class="sub">施行情報 / 司式者 / お勉強</div>
+  <div class="copy-hd">© KUNIHIKO MIYASHITA</div>
+</header>
+
+<!-- TOP -->
+<div id="p-top" class="page">
+  <div class="top-hero">
+    <div class="emo">⚘</div>
+    <h2>葬祭情報アプリ</h2>
+    <p>式典・司式者情報 &amp; 葬祭ディレクター対策</p>
+  </div>
+  <div class="copy-top">© KUNIHIKO MIYASHITA</div>
+  <div class="top-btns">
+    <button class="top-btn" onclick="goPage('p-shiko')">
+      <div class="tico" style="background:var(--pk-bg)">🏛️</div>
+      <div class="ttx"><h3>式典情報</h3><p>44寺院の通夜・葬儀作法</p></div>
+      <div class="tarr">›</div>
+    </button>
+    <button class="top-btn" onclick="goPage('p-jushoku')">
+      <div class="tico" style="background:var(--mt-bg)">🧎</div>
+      <div class="ttx"><h3>司式者情報</h3><p>64寺院の連絡先・情報</p></div>
+      <div class="tarr">›</div>
+    </button>
+    <button class="top-btn" onclick="goPage('p-ostudy')">
+      <div class="tico" style="background:var(--lv-bg)">📖</div>
+      <div class="ttx"><h3>お勉強</h3><p>問題集・テキスト学習</p></div>
+      <div class="tarr">›</div>
+    </button>
+  </div>
+  <div style="margin-top:14px;display:flex;gap:8px">
+    <button onclick="exportAllEdits()" style="flex:1;background:var(--lv-bg);border:1.5px solid var(--lv);color:var(--lv);border-radius:12px;padding:10px 8px;font-size:.8rem;font-weight:700;cursor:pointer">📤 全データ出力</button>
+    <button onclick="importAllEdits()" style="flex:1;background:var(--mt-bg);border:1.5px solid var(--mt);color:var(--mt);border-radius:12px;padding:10px 8px;font-size:.8rem;font-weight:700;cursor:pointer">📥 全データ取込</button>
+  </div>
+</div>
+<!-- 施行情報 -->
+<div id="p-shiko" class="page">
+  <div class="sec-hd">
+    <button class="back-btn" onclick="goPage('p-top')">← 戻る</button>
+    <h2>🏛️ 式典情報</h2>
+  </div>
+  <div id="shiko-main-tabs" class="tabs">
+    <button class="tab active" onclick="switchTab('shiko-main','shikiten',this)">式典情報</button>
+    <button class="tab" onclick="switchTab('shiko-main','microbus',this)">マイクロバス</button>
+    <button class="tab" onclick="switchTab('shiko-main','hanso',this)">搬送計算</button>
+    <button class="tab" onclick="switchTab('shiko-main','reikyuu',this)">霊柩計算</button>
+  </div>
+  <div id="tc-shikiten" class="tc active">
+    <div id="shikiten-sect-bar" class="tabs" style="flex-wrap:wrap;gap:4px 6px;padding-bottom:4px"></div>
+    <div id="shikiten-list-panel" style="display:none;margin-top:2px">
+      <div class="cer-nav-hd"><button class="back-btn-sm" onclick="shikitenBack()">◀ 宗派選択</button><span id="shikiten-list-title"></span></div>
+      <div id="shikiten-temple-list"></div>
+    </div>
+    <div id="tc-st0" class="tc active">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(0)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(0)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('0','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('0','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-0"><div class="cer-grid"></div></div>
+      <div id="cer-sg-0" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st1" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(1)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(1)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('1','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('1','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-1"><div class="cer-grid"></div></div>
+      <div id="cer-sg-1" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st2" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(2)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(2)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('2','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('2','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-2"><div class="cer-grid"></div></div>
+      <div id="cer-sg-2" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st3" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(3)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(3)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('3','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('3','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-3"><div class="cer-grid"></div></div>
+      <div id="cer-sg-3" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st4" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(4)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(4)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('4','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('4','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-4"><div class="cer-grid"></div></div>
+      <div id="cer-sg-4" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st5" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(5)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(5)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('5','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('5','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-5"><div class="cer-grid"></div></div>
+      <div id="cer-sg-5" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st6" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(6)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(6)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('6','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('6','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-6"><div class="cer-grid"></div></div>
+      <div id="cer-sg-6" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st7" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(7)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(7)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('7','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('7','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-7"><div class="cer-grid"></div></div>
+      <div id="cer-sg-7" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st8" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(8)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(8)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('8','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('8','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-8"><div class="cer-grid"></div></div>
+      <div id="cer-sg-8" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st9" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(9)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(9)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('9','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('9','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-9"><div class="cer-grid"></div></div>
+      <div id="cer-sg-9" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st10" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(10)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(10)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('10','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('10','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-10"><div class="cer-grid"></div></div>
+      <div id="cer-sg-10" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st11" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(11)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(11)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('11','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('11','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-11"><div class="cer-grid"></div></div>
+      <div id="cer-sg-11" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st12" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(12)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(12)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('12','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('12','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-12"><div class="cer-grid"></div></div>
+      <div id="cer-sg-12" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st13" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(13)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(13)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('13','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('13','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-13"><div class="cer-grid"></div></div>
+      <div id="cer-sg-13" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st14" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(14)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(14)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('14','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('14','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-14"><div class="cer-grid"></div></div>
+      <div id="cer-sg-14" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st15" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(15)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(15)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('15','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('15','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-15"><div class="cer-grid"></div></div>
+      <div id="cer-sg-15" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st16" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(16)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(16)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('16','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('16','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-16"><div class="cer-grid"></div></div>
+      <div id="cer-sg-16" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st17" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(17)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(17)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('17','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('17','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-17"><div class="cer-grid"></div></div>
+      <div id="cer-sg-17" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st18" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(18)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(18)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('18','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('18','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-18"><div class="cer-grid"></div></div>
+      <div id="cer-sg-18" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st19" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(19)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(19)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('19','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('19','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-19"><div class="cer-grid"></div></div>
+      <div id="cer-sg-19" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st20" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(20)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(20)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('20','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('20','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-20"><div class="cer-grid"></div></div>
+      <div id="cer-sg-20" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st21" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(21)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(21)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('21','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('21','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-21"><div class="cer-grid"></div></div>
+      <div id="cer-sg-21" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st22" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(22)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(22)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('22','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('22','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-22"><div class="cer-grid"></div></div>
+      <div id="cer-sg-22" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st23" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(23)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(23)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('23','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('23','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-23"><div class="cer-grid"></div></div>
+      <div id="cer-sg-23" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st24" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(24)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(24)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('24','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('24','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-24"><div class="cer-grid"></div></div>
+      <div id="cer-sg-24" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st25" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(25)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(25)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('25','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('25','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-25"><div class="cer-grid"></div></div>
+      <div id="cer-sg-25" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st26" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(26)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(26)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('26','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('26','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-26"><div class="cer-grid"></div></div>
+      <div id="cer-sg-26" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st27" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(27)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(27)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('27','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('27','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-27"><div class="cer-grid"></div></div>
+      <div id="cer-sg-27" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st28" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(28)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(28)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('28','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('28','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-28"><div class="cer-grid"></div></div>
+      <div id="cer-sg-28" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st29" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(29)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(29)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('29','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('29','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-29"><div class="cer-grid"></div></div>
+      <div id="cer-sg-29" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st30" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(30)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(30)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('30','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('30','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-30"><div class="cer-grid"></div></div>
+      <div id="cer-sg-30" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st31" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(31)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(31)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('31','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('31','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-31"><div class="cer-grid"></div></div>
+      <div id="cer-sg-31" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st32" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(32)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(32)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('32','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('32','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-32"><div class="cer-grid"></div></div>
+      <div id="cer-sg-32" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st33" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(33)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(33)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('33','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('33','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-33"><div class="cer-grid"></div></div>
+      <div id="cer-sg-33" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st34" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(34)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(34)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('34','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('34','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-34"><div class="cer-grid"></div></div>
+      <div id="cer-sg-34" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st35" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(35)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(35)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('35','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('35','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-35"><div class="cer-grid"></div></div>
+      <div id="cer-sg-35" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st36" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(36)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(36)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('36','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('36','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-36"><div class="cer-grid"></div></div>
+      <div id="cer-sg-36" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st37" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(37)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(37)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('37','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('37','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-37"><div class="cer-grid"></div></div>
+      <div id="cer-sg-37" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st38" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(38)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(38)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('38','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('38','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-38"><div class="cer-grid"></div></div>
+      <div id="cer-sg-38" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st39" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(39)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(39)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('39','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('39','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-39"><div class="cer-grid"></div></div>
+      <div id="cer-sg-39" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st40" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(40)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(40)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('40','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('40','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-40"><div class="cer-grid"></div></div>
+      <div id="cer-sg-40" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st41" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(41)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(41)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('41','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('41','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-41"><div class="cer-grid"></div></div>
+      <div id="cer-sg-41" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st42" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(42)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(42)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('42','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('42','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-42"><div class="cer-grid"></div></div>
+      <div id="cer-sg-42" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+    <div id="tc-st43" class="tc">
+    <div class="cer-detail-hd"><button class="back-btn-sm" onclick="shikitenBackToList()">◀ 一覧へ</button><div class="cer-detail-acts"><button class="ebtn pri sm" onclick="openShikitenEdit(43)">✏️ 編集</button><button class="ebtn grn sm" onclick="exportShikiten(43)">📤 出力</button></div></div>
+    <div class="card">
+      <div class="cer-tabs">
+        <button class="cer-tab ty active" onclick="cerTab('43','ty',this)">通夜</button>
+        <button class="cer-tab sg" onclick="cerTab('43','sg',this)">葬儀</button>
+      </div>
+      <div id="cer-ty-43"><div class="cer-grid"></div></div>
+      <div id="cer-sg-43" style="display:none"><div class="cer-grid"></div></div>
+    </div></div>
+  </div>
+  <div id="tc-microbus" class="tc">
+<div class="notice" style="margin-bottom:10px">※金額はすべて税別。消費税10%が別途かかります。（2023/10/1改定）</div>
+
+<div class="mb-sec">
+  <h4>🚌 葬儀 CH便（CH〜火葬場）</h4>
+  <table class="mbt">
+    <tr><th>区間</th><th>一般</th><th>会員</th></tr>
+    <tr><td>富士吉田〜聖苑</td><td class="gp">¥40,000</td><td class="mp">¥20,000</td></tr>
+    <tr><td>下吉田〜聖苑</td><td class="gp">¥40,000</td><td class="mp">¥20,000</td></tr>
+    <tr><td>都留〜ゆうきゅう</td><td class="gp">¥40,000</td><td class="mp">¥20,000</td></tr>
+    <tr><td>都留〜大月斎場</td><td class="gp">¥40,000</td><td class="mp">¥20,000</td></tr>
+    <tr><td>大月〜大月斎場</td><td class="gp">¥40,000</td><td class="mp">¥20,000</td></tr>
+  </table>
+</div>
+
+<div class="mb-sec">
+  <h4>⛩️ 葬儀 自宅〜聖苑〜自宅</h4>
+  <table class="mbt">
+    <tr><th>エリア</th><th>一般</th><th>会員</th></tr>
+    <tr><td>CH周辺・船津</td><td class="gp">¥50,000</td><td class="mp">¥30,000</td></tr>
+    <tr><td>下吉田・勝山・小立・鳴沢</td><td class="gp">¥50,000</td><td class="mp">¥30,000</td></tr>
+    <tr><td>大石・小沼・忍野・山中</td><td class="gp">¥60,000</td><td class="mp">¥40,000</td></tr>
+    <tr><td>平野・西湖</td><td class="gp">¥60,000</td><td class="mp">¥40,000</td></tr>
+    <tr><td>精進・本栖</td><td class="gp">¥60,000</td><td class="mp">¥40,000</td></tr>
+    <tr><td>富士ケ嶺</td><td class="gp">¥60,000</td><td class="mp">¥40,000</td></tr>
+  </table>
+</div>
+
+<div class="mb-sec">
+  <h4>⛩️ 葬儀 自宅〜聖苑〜CH〜自宅</h4>
+  <table class="mbt">
+    <tr><th>エリア</th><th>一般</th><th>会員</th></tr>
+    <tr><td>CH周辺・船津</td><td class="gp">¥55,000</td><td class="mp">¥35,000</td></tr>
+    <tr><td>下吉田・勝山・小立・鳴沢</td><td class="gp">¥55,000</td><td class="mp">¥35,000</td></tr>
+    <tr><td>大石・小沼・忍野・山中</td><td class="gp">¥60,000</td><td class="mp">¥45,000</td></tr>
+    <tr><td>平野・西湖</td><td class="gp">¥65,000</td><td class="mp">¥45,000</td></tr>
+    <tr><td>精進・本栖</td><td class="gp">¥65,000</td><td class="mp">¥45,000</td></tr>
+    <tr><td>富士ケ嶺</td><td class="gp">¥65,000</td><td class="mp">¥45,000</td></tr>
+  </table>
+</div>
+
+<div class="mb-sec">
+  <h4>🪷 法事 自宅〜ホール〜自宅</h4>
+  <table class="mbt">
+    <tr><th>エリア</th><th>一般・会員共通</th></tr>
+    <tr><td>吉田市内・船津</td><td class="gp">¥30,000</td></tr>
+    <tr><td>勝山・小立・鳴沢</td><td class="gp">¥35,000</td></tr>
+    <tr><td>大石・小沼・忍野・山中</td><td class="gp">¥40,000</td></tr>
+    <tr><td>平野・西湖</td><td class="gp">¥45,000</td></tr>
+    <tr><td>精進・本栖</td><td class="gp">¥50,000</td></tr>
+    <tr><td>富士ケ嶺・大月</td><td class="gp">¥50,000</td></tr>
+    <tr><td>小菅</td><td class="gp">¥70,000</td></tr>
+  </table>
+</div>
+
+<div class="mb-sec">
+  <h4>🪷 法事 自宅〜寺〜ホール〜自宅</h4>
+  <table class="mbt">
+    <tr><th>エリア</th><th>一般・会員共通</th></tr>
+    <tr><td>吉田市内・船津</td><td class="gp">¥35,000</td></tr>
+    <tr><td>勝山・小立・鳴沢</td><td class="gp">¥40,000</td></tr>
+    <tr><td>大石・小沼・忍野・山中</td><td class="gp">¥45,000</td></tr>
+    <tr><td>平野・西湖</td><td class="gp">¥50,000</td></tr>
+    <tr><td>精進・本栖</td><td class="gp">¥55,000</td></tr>
+    <tr><td>富士ケ嶺・大月</td><td class="gp">¥60,000</td></tr>
+  </table>
+</div>
+
+<div class="mb-sec">
+  <h4>🪷 法事 自宅〜寺〜墓〜ホール〜自宅</h4>
+  <table class="mbt">
+    <tr><th>エリア</th><th>一般・会員共通</th></tr>
+    <tr><td>吉田市内・船津</td><td class="gp">¥45,000</td></tr>
+    <tr><td>勝山・小立・鳴沢</td><td class="gp">¥45,000</td></tr>
+    <tr><td>大石・小沼・忍野・山中</td><td class="gp">¥50,000</td></tr>
+    <tr><td>平野・西湖</td><td class="gp">¥60,000</td></tr>
+    <tr><td>精進・本栖</td><td class="gp">¥65,000</td></tr>
+    <tr><td>富士ケ嶺・大月</td><td class="gp">¥65,000</td></tr>
+  </table>
+</div>
+  </div>
+  <div id="tc-hanso" class="tc">
+    <div class="form-card">
+      <h3>🚐 搬送料金計算</h3>
+      <div class="notice">基本料金 ¥12,830 + 距離料金（¥4,100/10km区分）<br>夜間（22:00〜5:00）：別途割増あり</div>
+      <div class="fg"><label>距離（km）</label><input class="fi" id="h-km" type="number" min="0" step="0.1" placeholder="例: 25"></div>
+      <div class="fck"><input type="checkbox" id="h-night"><label for="h-night">深夜料金あり（22:00〜5:00）</label></div>
+      <div id="h-night-row" style="display:none" class="fg"><label>深夜時間（分）</label><input class="fi" id="h-nmin" type="number" min="0" step="1" placeholder="深夜帯の分数（例: 90）"></div>
+      <button class="calc-btn" onclick="calcHanso()">計算する</button>
+      <div class="res-box" id="h-result">
+        <div class="res-row"><span class="rl">基本料金</span><span class="rv" id="h-res-base"></span></div>
+        <div class="res-row"><span class="rl">距離料金</span><span class="rv" id="h-res-dist"></span></div>
+        <div class="res-row"><span class="rl">深夜割増</span><span class="rv" id="h-res-night"></span></div>
+        <div class="res-row"><span class="rl">合計</span><span class="rv big" id="h-res-total"></span></div>
+      </div>
+    </div>
+  </div>
+  <div id="tc-reikyuu" class="tc">
+    <div class="form-card">
+      <h3>⚱️ 霊柩料金計算</h3>
+      <div class="notice">基本料金 ¥18,700 + 距離料金（¥6,900/10km区分）<br>※霊柩車は夜間割増なし</div>
+      <div class="fg"><label>距離（km）</label><input class="fi" id="r-km" type="number" min="0" step="0.1" placeholder="例: 15"></div>
+      <button class="calc-btn" onclick="calcReikyuu()">計算する</button>
+      <div class="res-box" id="r-result">
+        <div class="res-row"><span class="rl">基本料金</span><span class="rv" id="r-res-base"></span></div>
+        <div class="res-row"><span class="rl">距離料金</span><span class="rv" id="r-res-dist"></span></div>
+        <div class="res-row"><span class="rl">合計</span><span class="rv big" id="r-res-total"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="p-jushoku" class="page">
+  <div class="sec-hd"><button class="back-btn" onclick="goPage('p-top')">← 戻る</button><h2>🧎 司式者情報</h2></div>
+  <div class="etoolbar"><button class="ebtn pri" id="edit-toggle" onclick="toggleEdit()">✏️ 編集モード</button><button class="ebtn grn" onclick="exportJSON()">📥 エクスポート</button><button class="ebtn dan" onclick="resetEdits()">🔄 リセット</button><button class="ebtn" id="area-mgr-btn" onclick="toggleAreaMgr()">🗂 エリア管理</button></div>
+  <div class="srch-wrap"><input type="text" id="j-search" placeholder="寺院名・住所で検索..." oninput="renderJushoku()"></div>
+<div id="area-tabs" class="tabs">
+<button class="tab mt active" onclick="setArea('富士吉田',this)">富士吉田</button>
+<button class="tab mt" onclick="setArea('河口湖',this)">河口湖</button>
+<button class="tab mt" onclick="setArea('西桂',this)">西桂</button>
+<button class="tab mt" onclick="setArea('その他',this)">その他</button>
+<button class="tab mt" onclick="setArea('都留・大月',this)">都留・大月</button>
+<button class="tab mt" onclick="setArea('紹介',this)">紹介</button>
+</div>
+<div id="area-mgr-panel" style="display:none;background:var(--lv-bg);border-radius:12px;padding:12px;margin-bottom:12px">
+  <div style="font-weight:700;font-size:.85rem;color:var(--lv);margin-bottom:8px">🗂 エリア管理</div>
+  <div id="area-mgr-list"></div>
+  <div style="display:flex;gap:6px;margin-top:8px">
+    <input id="area-new-name" placeholder="新エリア名を入力" style="flex:1;border:1px solid #ddd;border-radius:8px;padding:6px 10px;font-size:.83rem;font-family:inherit;background:#fff">
+    <button class="ebtn pri sm" onclick="addCustomArea()">＋ 追加</button>
+  </div>
+</div>
+  <div id="j-list"></div>
+</div>
+<div id="p-ostudy" class="page">
+  <div class="sec-hd"><button class="back-btn" onclick="goPage('p-top')">← 戻る</button><h2>📖 お勉強</h2></div>
+  <div class="ostudy-btns">
+    <button class="top-btn" onclick="goPage('p-quiz')">
+      <div class="tico" style="background:#F3EEFF">📝</div>
+      <div class="ttx"><h3>問題集</h3><p>葬祭ディレクター試験対策 2500問超</p></div>
+      <div class="tarr">›</div>
+    </button>
+    <button class="top-btn" onclick="openStudy()">
+      <div class="tico" style="background:#EDFAF9">📚</div>
+      <div class="ttx"><h3>テキストで勉強</h3><p>7章のテキスト＋フラッシュカード20問</p></div>
+      <div class="tarr">›</div>
+    </button>
+  </div>
+</div>
+<div id="p-quiz" class="page" style="padding:0;max-width:none">
 <!-- TOP PAGE -->
-<div id="topPage" class="page active">
+<div id="topPage" class="quiz-page active">
+<div style="padding:10px 14px 0"><button onclick="goPage('p-top')" style="background:#fff;border:2px solid #ff6b9d;color:#ff6b9d;border-radius:50px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;">&#8592; 情報アプリへ戻る</button></div>
   <div class="app-header"><h1>⛩️ 葬祭問題集</h1><div class="sub">葬祭ディレクター技能審査対策 および 日常業務向上</div><div class="sub" style="font-size:.75rem;opacity:.7;margin-top:2px">ver 3.0（全2501問：基本2001問 / 上級500問）</div></div>
   <div id="userSection"></div>
   <div class="card">
@@ -140,7 +1000,7 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 </div>
 
 <!-- SETUP PAGE -->
-<div id="setupPage" class="page">
+<div id="setupPage" class="quiz-page">
   <div class="app-header"><h1 id="setupTitle">問題設定</h1></div>
   <div class="card">
     <div class="section-title">🔢 問題数</div>
@@ -165,7 +1025,7 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 </div>
 
 <!-- QUIZ PAGE -->
-<div id="quizPage" class="page">
+<div id="quizPage" class="quiz-page">
   <div class="quiz-header">
     <div class="progress-wrap">
       <div class="q-num" id="qNum">問 1 / 50</div>
@@ -204,7 +1064,7 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 </div>
 
 <!-- RESULT PAGE -->
-<div id="resultPage" class="page">
+<div id="resultPage" class="quiz-page">
   <div class="result-hero">
     <div class="score-circle"><div class="score-num" id="resultScoreNum">0</div><div class="score-pct">点</div></div>
     <h2 id="resultTitle"></h2>
@@ -230,7 +1090,7 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 </div>
 
 <!-- HISTORY PAGE -->
-<div id="historyPage" class="page">
+<div id="historyPage" class="quiz-page">
   <div class="app-header"><h1>📊 学習履歴</h1></div>
   <div id="historyList"></div>
   <div style="text-align:center;margin-top:12px;padding-bottom:30px">
@@ -243,6 +1103,1033 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
   ©KUNIHIKO MIYASHIYA
 </div>
 
+</div>
+
+<!-- REPORT MODAL -->
+<div id="reportModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:80vh;overflow-y:auto;padding:18px 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-weight:700;font-size:.95rem">📋 報告された問題一覧</div>
+      <button onclick="document.getElementById('reportModal').style.display='none'" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#aaa">✕</button>
+    </div>
+    <div id="reportList"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="copyReports()" style="flex:1;background:var(--lv);color:#fff;border:none;border-radius:50px;padding:10px;font-weight:700;cursor:pointer;font-size:.85rem">📋 コピー</button>
+      <button onclick="clearReports()" style="flex:1;background:#fff5f5;color:#f44336;border:2px solid #f44336;border-radius:50px;padding:10px;font-weight:700;cursor:pointer;font-size:.85rem">🗑️ クリア</button>
+    </div>
+  </div>
+</div>
+
+<div id="study-screen" class="study-screen">
+<div class="study-hd"><button class="study-hd-back" onclick="closeStudy()">✕</button><div><div class="study-hd-ttl">📚 テキストで勉強</div><div class="study-hd-sub">葬祭ディレクター試験対策</div></div><button class="study-edit-btn" id="study-edit-toggle" onclick="toggleStudyEdit()">✏️ 編集</button></div>
+<div class="study-body">
+<div id="sw-ch0" class="study-ch active"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">📚</div><div class="acc-title-s">葬儀の定義と目的</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><p class="s-p">葬儀とは<strong>死者を弔い、遺族が悲嘆から立ち直るための儀式</strong>。3つの機能を持つ。</p><table class="s-table"><tr><th>機能</th><th>内容</th></tr><tr><td>死の公示</td><td>訃報・告別式で社会に伝える</td></tr><tr><td>遺体処理</td><td>衛生的・宗教的に適切に処置</td></tr><tr><td>悲嘆支援（グリーフワーク）</td><td>遺族の心理的ケア</td></tr></table><div class="s-memo">グリーフワーク：死別後の悲しみを乗り越える心理的プロセス。葬祭ディレクターはアフターケアも担う。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🏷️</div><div class="acc-title-s">葬儀の形式・種類</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>形式</th><th>特徴</th><th>割合</th></tr><tr><td>仏式</td><td>読経・焼香が中心</td><td>約90%</td></tr><tr><td>神式</td><td>玉串奉奠・通夜祭・葬場祭</td><td>約3%</td></tr><tr><td>キリスト教式</td><td>讃美歌・祈祷</td><td>約1%</td></tr><tr><td>無宗教式</td><td>自由な形式</td><td>約6%</td></tr></table><p class="s-p"><strong>規模別：</strong>一般葬／家族葬（10〜30人）／直葬（火葬式）／一日葬（通夜なし）／社葬・合同葬</p><div class="s-memo">近年は家族葬・直葬が増加傾向。コロナ禍以降さらに加速。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">👔</div><div class="acc-title-s">葬祭ディレクターの役割と資格</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><p class="s-p">遺族の最初の窓口として<strong>心理的サポート・葬儀手配・法的手続き案内・アフターフォロー</strong>を担う専門職。</p><table class="s-table"><tr><th>資格</th><th>受験資格</th><th>学科合格率</th></tr><tr><td>1級</td><td>実務経験5年以上</td><td>約70%（実技約80%）</td></tr><tr><td>2級</td><td>実務経験2年以上</td><td>約80%（実技約85%）</td></tr></table><div class="s-memo">試験は年1回。筆記（学科）＋実技（司会進行・接遇ロールプレイ）両方の合格が必要。認定機関：葬祭ディレクター技能審査協会（厚生労働省認定、1983年創設）</div></div></div>
+</div>
+<div id="sw-ch1" class="study-ch"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🙏</div><div class="acc-title-s">仏式葬儀・主要宗派</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>宗派</th><th>念仏・教え</th><th>焼香・特徴</th></tr><tr><td>浄土宗</td><td>南無阿弥陀仏</td><td>3回・額に押しいただく。引導作法</td></tr><tr><td>浄土真宗</td><td>南無阿弥陀仏</td><td>1回・押しいただかない。位牌なし→過去帳</td></tr><tr><td>曹洞宗</td><td>坐禅重視</td><td>引導が長い。只管打坐</td></tr><tr><td>天台宗</td><td>法華経重視</td><td>複数の僧侶。3回焼香</td></tr><tr><td>真言宗</td><td>密教・真言を唱える</td><td>108玉の数珠。3回焼香</td></tr><tr><td>日蓮宗</td><td>南無妙法蓮華経（お題目）</td><td>3回焼香</td></tr></table><div class="s-memo">浄土真宗では「冥福・成仏・供養・霊前・永眠」は使わない。「往生」「浄土へ」「御仏前」を使う。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">⛩️</div><div class="acc-title-s">神式葬儀（神葬祭）</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><p class="s-p"><strong>正式名称：神葬祭（しんそうさい）</strong></p><table class="s-table"><tr><th>儀式</th><th>内容</th></tr><tr><td>帰幽報告</td><td>神棚に死を報告し扉を閉める</td></tr><tr><td>枕直し・枕飾り</td><td>遺体を整え小祭壇を設置</td></tr><tr><td>通夜祭</td><td>仏式の通夜に相当</td></tr><tr><td>葬場祭</td><td>仏式の葬儀・告別式に相当</td></tr><tr><td>火葬祭</td><td>火葬炉前での祭祀</td></tr><tr><td>埋葬祭</td><td>墓への納骨</td></tr></table><p class="s-p"><strong>焼香の代わり：</strong>玉串奉奠（たまぐしほうてん）</p><p class="s-p"><strong>香典表書き：</strong>御玉串料・御榊料・御霊前</p><div class="s-memo">神式では「死」を「帰幽（きゆう）」、「霊魂」を「みたま」という。数珠は使わない。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">✝️</div><div class="acc-title-s">キリスト教式葬儀</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>区分</th><th>流れ</th></tr><tr><td>カトリック</td><td>通夜ミサ（ロザリオの祈り）→葬儀ミサ→火葬・埋葬</td></tr><tr><td>プロテスタント</td><td>前夜式（祈祷・讃美歌）→葬儀式→火葬・埋葬</td></tr></table><p class="s-p"><strong>香典表書き：</strong>「お花料」「献花料」（御霊前・御香典は不可）</p><p class="s-p"><strong>焼香の代わり：</strong>献花（白菊・カーネーション等）</p><div class="s-memo">カトリック：「死者のためのミサ（レクイエム）」。プロテスタントは礼拝形式。数珠は使わない。</div></div></div>
+</div>
+<div id="sw-ch2" class="study-ch"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🌙</div><div class="acc-title-s">臨終〜安置</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>段階</th><th>内容</th></tr><tr><td>末期の水</td><td>脱脂綿に水を含ませ口を湿らせる（近親者が行う）</td></tr><tr><td>清拭</td><td>アルコール・温タオルで遺体を拭き清める</td></tr><tr><td>エンゼルケア</td><td>口腔・眼・鼻の処置、化粧・整容</td></tr><tr><td>枕飾り</td><td>枕元の小祭壇。線香・ろうそく・花・供物</td></tr><tr><td>枕経</td><td>僧侶が最初に行う読経</td></tr><tr><td>搬送</td><td>安置場所（自宅・斎場・霊安室）へ</td></tr></table><div class="s-memo">遺体搬送に特別な許可証は不要。死亡診断書（コピー）を携行する慣習がある。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🕯️</div><div class="acc-title-s">納棺〜通夜</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>段階</th><th>内容</th></tr><tr><td>湯灌（ゆかん）</td><td>入浴形式で遺体を湯で清める儀式</td></tr><tr><td>旅支度</td><td>白装束・草履・杖・笠・六文銭（模擬）・手甲・脚絆</td></tr><tr><td>遺体の向き</td><td>北枕または西向きが基本（地域差あり）</td></tr><tr><td>通夜</td><td>夜通し故人と過ごす（現在は2〜3時間の半通夜が主流）</td></tr><tr><td>夜伽（よとぎ）</td><td>翌朝まで灯りを絶やさず故人を見守ること</td></tr></table><div class="s-memo">「通夜振る舞い」：通夜後に参列者をもてなす会食。「お清め」とも呼ぶ。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🔥</div><div class="acc-title-s">葬儀〜火葬〜法要</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>段階</th><th>内容</th></tr><tr><td>葬儀・告別式</td><td>読経・焼香・弔辞・弔電披露・出棺</td></tr><tr><td>出棺</td><td>棺は足を先に出す</td></tr><tr><td>火葬</td><td>死後24時間以降。温度800〜1200℃、60〜90分</td></tr><tr><td>収骨（拾骨）</td><td>二人で箸から箸へ。足→頭の順。のど仏は最後</td></tr><tr><td>精進落とし</td><td>火葬後の会食（参列者・僧侶をもてなす）</td></tr><tr><td>初七日</td><td>死後7日目（現在は葬儀当日に繰り上げが一般的）</td></tr><tr><td>四十九日</td><td>忌明け。本位牌への切替・納骨</td></tr></table><p class="s-p"><strong>法要の時期：</strong>初七日→四十九日→百か日→一周忌→三回忌（満2年）→七回忌（満6年）</p><div class="s-memo">精進落とし：本来は四十九日明けに肉・魚を食べ始めることを指したが、現在は葬儀後の会食を指す。</div></div></div>
+</div>
+<div id="sw-ch3" class="study-ch"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🏥</div><div class="acc-title-s">遺体処置の基本</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>処置</th><th>内容</th></tr><tr><td>死後硬直</td><td>死後2〜3時間で始まり8〜12時間で全身。24〜48時間後に緩解</td></tr><tr><td>腐敗開始</td><td>夏：数時間〜1日、冬：数日（保冷が必要）</td></tr><tr><td>ドライアイス</td><td>腹部・胸部に当てる。1〜2日で交換</td></tr><tr><td>清拭</td><td>アルコール・温タオルで拭き清める</td></tr><tr><td>湯灌</td><td>入浴形式で洗い清める儀式（より丁寧）</td></tr><tr><td>エンゼルケア</td><td>口腔・眼・鼻の処置＋化粧・整容</td></tr></table><div class="s-memo">エンゼルケアは病院では看護師が、葬儀社では専門スタッフが行うことが多い。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">💉</div><div class="acc-title-s">エンバーミング</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><p class="s-p"><strong>目的：</strong>防腐・消毒・修復（保存性向上・安全性確保・外観回復）</p><table class="s-table"><tr><th>項目</th><th>内容</th></tr><tr><td>資格</td><td>国家資格ではない（民間資格：IFSA認定エンバーマー等）</td></tr><tr><td>主な用途</td><td>海外搬送・長期保存・遺体の修復が必要な場合</td></tr><tr><td>法的根拠</td><td>墓地埋葬法に規定なし。医師法等に注意</td></tr></table><div class="s-memo">エンバーミング後の遺体は国際航空輸送（IATA）の衛生基準を満たせる場合がある。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">📄</div><div class="acc-title-s">法的手続きと書類</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>書類</th><th>発行者</th><th>期限・用途</th></tr><tr><td>死亡診断書</td><td>担当医師</td><td>死亡届に添付</td></tr><tr><td>死体検案書</td><td>警察医・法医</td><td>事件性のある死亡時</td></tr><tr><td>死亡届</td><td>届出人</td><td>7日以内（国外3か月）に市区町村へ</td></tr><tr><td>火葬許可証</td><td>市区町村長</td><td>死亡届受理後に交付</td></tr><tr><td>埋葬許可証</td><td>火葬場（証印押印）</td><td>火葬後に渡される。納骨時に墓地管理者へ提出</td></tr></table><div class="s-memo">死亡届の提出先：死亡地・本籍地・届出人住所地のいずれかの市区町村役場。</div></div></div>
+</div>
+<div id="sw-ch4" class="study-ch"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">💬</div><div class="acc-title-s">言葉遣い・忌み言葉</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>忌み言葉</th><th>代替表現・理由</th></tr><tr><td>重ね重ね・度々・またまた</td><td>「本当に」「心より」（不幸が重なるとして忌む）</td></tr><tr><td>生きていた頃</td><td>「お元気だった頃」</td></tr><tr><td>死亡・死ぬ</td><td>「ご逝去」「お亡くなりになる」</td></tr><tr><td>急に・突然</td><td>「思いがけず」「突然のことで」</td></tr><tr><td>ますます・いよいよ</td><td>重ね言葉として避ける</td></tr></table><p class="s-p"><strong>浄土真宗で特に避ける：</strong>冥福・成仏・供養・霊前・永眠<br>→「往生」「浄土へ」「御仏前」を使う</p><div class="s-memo">「御愁傷様です」：直接の弔意。「お悔やみ申し上げます」：文書・電話でも使える。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🙏</div><div class="acc-title-s">焼香・香典の作法</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>項目</th><th>仏式（一般）</th><th>浄土真宗</th></tr><tr><td>焼香回数</td><td>3回（宗派で差あり）</td><td>1回（押しいただかない）</td></tr><tr><td>数珠</td><td>1連（宗派別形式）</td><td>2連（門徒念珠）</td></tr><tr><td>四十九日前の香典</td><td>御霊前・御香典</td><td>御仏前（最初から）</td></tr><tr><td>四十九日後の香典</td><td>御仏前</td><td>御仏前</td></tr></table><p class="s-p"><strong>神式：</strong>御玉串料・御榊料 　<strong>キリスト教式：</strong>お花料・献花料</p><p class="s-p"><strong>水引の色：</strong>黒白・双銀（仏式一般）/ 双白（神式・関西）/ 黄白（関西の法事）</p><div class="s-memo">香典返し（半返し）：四十九日頃に香典の半額程度をお返しする慣習。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">📞</div><div class="acc-title-s">電話対応・接客マナー</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>場面</th><th>ポイント</th></tr><tr><td>電話応対</td><td>3コール以内。名前を名乗る。メモ・復唱確認必須</td></tr><tr><td>第一報電話</td><td>落ち着いた声・ゆっくりと。「すぐに参ります」と迅速対応</td></tr><tr><td>服装</td><td>黒系スーツ・光沢なし・アクセサリー最小限（白・グレーも可）</td></tr><tr><td>お辞儀</td><td>弔問時：深い礼（45〜90度）。ゆっくりと</td></tr><tr><td>受付業務</td><td>芳名帳記帳・香典受け取り・返礼品お渡し</td></tr></table><div class="s-memo">「どうぞ」単独は避ける。「こちらへどうぞ」「ご案内します」のように使う。</div></div></div>
+</div>
+<div id="sw-ch5" class="study-ch"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">⚰️</div><div class="acc-title-s">棺・骨壺</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>種類</th><th>材質・特徴</th></tr><tr><td>布張り棺</td><td>合板に布を貼った一般的な棺</td></tr><tr><td>桐棺</td><td>軽量・通気性良・高級感</td></tr><tr><td>ヒノキ棺</td><td>耐久性・香り・高価</td></tr><tr><td>エコ棺</td><td>段ボール・自然素材（直葬向け）</td></tr></table><table class="s-table"><tr><th>地域</th><th>収骨方法</th><th>骨壺</th></tr><tr><td>関東</td><td>全骨収骨（全ての骨を収める）</td><td>7寸（約21cm）</td></tr><tr><td>関西</td><td>部分収骨（のど仏等を中心に一部）</td><td>5寸（約15cm）</td></tr></table><div class="s-memo">のど仏（第二頸椎）は最後に収骨し、蓋の近くへ。仏様の座禅姿に見えることから大切に扱う。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🏛️</div><div class="acc-title-s">祭壇・位牌・遺影</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>用具</th><th>説明</th></tr><tr><td>白木祭壇</td><td>木製の伝統的祭壇。格式が高い</td></tr><tr><td>生花祭壇</td><td>生花でデザイン。現代的・華やか</td></tr><tr><td>白木位牌</td><td>葬儀〜四十九日まで使用</td></tr><tr><td>本位牌</td><td>四十九日法要後に作成（仏具店で）・開眼供養</td></tr><tr><td>繰り出し位牌</td><td>先祖代々の戒名札をまとめる位牌</td></tr><tr><td>遺影写真</td><td>標準：六切り（A4程度）。額縁は黒・グレー（光物不可）</td></tr></table><div class="s-memo">位牌に書く内容：戒名・没年月日・俗名・享年。浄土真宗は過去帳（または法名軸）を使用。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">🚗</div><div class="acc-title-s">霊柩車・火葬炉</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>種類</th><th>特徴</th></tr><tr><td>宮型（和型）霊柩車</td><td>金箔・装飾が豪華な和風。伝統的</td></tr><tr><td>洋型霊柩車</td><td>外観は一般車に近い。現在の主流</td></tr><tr><td>バン型（寝台車）</td><td>救急車風。病院搬送にも使用</td></tr></table><p class="s-p"><strong>火葬炉：</strong>温度800〜1200℃、所要時間60〜90分</p><p class="s-p"><strong>副葬品禁止：</strong>金属・ガラス・厚い本・ゴム製品（炉を傷める）</p><div class="s-memo">ペースメーカーは火葬前に必ず申告・摘出が必要。爆発の危険があるため非常に重要。</div></div></div>
+</div>
+<div id="sw-ch6" class="study-ch"><div class="acc-card open"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">📊</div><div class="acc-title-s">重要な期間・日数</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>項目</th><th>数字・内容</th></tr><tr><td>死亡届の提出期限（国内）</td><td>7日以内</td></tr><tr><td>死亡届の提出期限（国外）</td><td>3か月以内</td></tr><tr><td>火葬禁止期間</td><td>死後24時間（感染症指定等は例外）</td></tr><tr><td>四十九日</td><td>死後49日目（忌明け）</td></tr><tr><td>百か日</td><td>死後100日目</td></tr><tr><td>一周忌</td><td>死後満1年目</td></tr><tr><td>三回忌</td><td>死後満2年目（数え年で「三」）</td></tr><tr><td>忌中期間</td><td>四十九日まで（仏式）</td></tr><tr><td>喪中期間</td><td>一周忌まで（約1年）</td></tr></table></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">⚖️</div><div class="acc-title-s">関連法令</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>法令</th><th>主な内容</th></tr><tr><td>墓地埋葬法（昭和23年・1948年）</td><td>墓地・火葬場の設置基準、遺体の扱い。正式名：墓地、埋葬等に関する法律</td></tr><tr><td>死体解剖保存法</td><td>解剖・保存の条件（医学教育・事件捜査等）</td></tr><tr><td>感染症予防法</td><td>指定感染症の遺体は24時間以内の火葬が可能</td></tr><tr><td>廃棄物処理法</td><td>葬儀に関連する廃棄物の処理基準</td></tr></table><div class="s-memo">火葬許可証なく火葬すると罰則あり。墓地埋葬法は葬祭業の基本となる法律。</div></div></div>
+<div class="acc-card"><div class="acc-head" onclick="toggleAcc(this)"><div class="acc-head-left"><div class="acc-icon-s">📋</div><div class="acc-title-s">資格・試験データ</div></div><div class="acc-arrow">▼</div></div><div class="acc-body"><table class="s-table"><tr><th>項目</th><th>内容</th></tr><tr><td>1級受験資格</td><td>実務経験5年以上</td></tr><tr><td>2級受験資格</td><td>実務経験2年以上</td></tr><tr><td>実施回数</td><td>年1回（全国各地）</td></tr><tr><td>試験内容</td><td>学科（筆記）＋実技（司会・接遇）</td></tr><tr><td>1級合格率</td><td>学科：約70%、実技：約80%</td></tr><tr><td>2級合格率</td><td>学科：約80%、実技：約85%</td></tr><tr><td>認定機関</td><td>葬祭ディレクター技能審査協会（厚生労働省認定）</td></tr><tr><td>創設年</td><td>1983年（昭和58年）</td></tr></table><div class="s-memo">合格者には認定証と徽章が授与される。資格は更新制（5年ごとの更新講習）。</div></div></div>
+</div>
+<div id="sw-ch7" class="study-ch"><div class="sw-flash-top"><span id="sw-flash-counter">1 / 100</span></div><div class="sw-flash-hint">カードをタップ 🃏 でめくる</div><div class="sw-flash-wrap" onclick="flipCard()"><div class="sw-flash-inner" id="sw-flash-inner"><div class="sw-flash-f"><div class="sw-flash-q" id="sw-flash-q">読み込み中...</div></div><div class="sw-flash-b"><div class="sw-flash-a" id="sw-flash-a"></div><div class="sw-flash-note" id="sw-flash-note"></div></div></div></div><div class="sw-flash-btns"><button class="sw-flash-prev" onclick="flashMove(-1)">◀ 前へ</button><button class="sw-flash-next" onclick="flashMove(1)">次へ ▶</button></div><div class="sw-flash-dots" id="sw-flash-dots"></div><div class="flash-edit-toolbar" id="flash-edit-toolbar" style="display:none;justify-content:center;gap:8px;padding:6px 0;flex-wrap:wrap"><button class="ebtn sm" onclick="openFlashEdit(swFlashIdx)">✏️ 編集</button><button class="ebtn pri sm" onclick="openFlashEdit(-1)">➕ 追加</button><button class="ebtn grn sm" onclick="exportStudyEdits()">📤 出力</button><button class="ebtn sm" onclick="importStudyEdits()">📥 取込</button></div></div>
+</div>
+<nav class="st-bnav"><button class="st-bnav-btn active" onclick="switchStudyPage(0,this)"><span class="sbn-icon">📚</span><span>概論</span></button><button class="st-bnav-btn" onclick="switchStudyPage(1,this)"><span class="sbn-icon">🙏</span><span>宗教</span></button><button class="st-bnav-btn" onclick="switchStudyPage(2,this)"><span class="sbn-icon">📋</span><span>流れ</span></button><button class="st-bnav-btn" onclick="switchStudyPage(3,this)"><span class="sbn-icon">🏥</span><span>遺体</span></button><button class="st-bnav-btn" onclick="switchStudyPage(4,this)"><span class="sbn-icon">🤝</span><span>接遇</span></button><button class="st-bnav-btn" onclick="switchStudyPage(5,this)"><span class="sbn-icon">🏮</span><span>用具</span></button><button class="st-bnav-btn" onclick="switchStudyPage(6,this)"><span class="sbn-icon">📊</span><span>法令</span></button><button class="st-bnav-btn" onclick="switchStudyPage(7,this)"><span class="sbn-icon">🃏</span><span>カード</span></button></nav>
+</div>
+
+<!-- 式典情報 編集モーダル -->
+<div id="shikiten-edit-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-hd"><span id="sem-title">✏️ 編集</span><button class="modal-close" onclick="closeShikitenEdit()">✕</button></div>
+    <div class="modal-body" id="sem-body"></div>
+    <div class="modal-ft">
+      <button class="ebtn dan sm" onclick="resetShikitenEdit(currentSemIdx)">🔄 リセット</button>
+      <button class="ebtn pri" onclick="saveShikitenEdit(currentSemIdx)">💾 保存</button>
+    </div>
+  </div>
+</div>
+<!-- フラッシュカード 編集モーダル -->
+<div id="flash-edit-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-hd"><span id="fem-title">カード編集</span><button class="modal-close" onclick="closeFlashEdit()">✕</button></div>
+    <div class="modal-body">
+      <div class="sem-row"><span class="sem-lbl">問い</span><textarea class="sem-input" id="fem-q" rows="3" placeholder="問いを入力"></textarea></div>
+      <div class="sem-row"><span class="sem-lbl">答え</span><textarea class="sem-input" id="fem-a" rows="3" placeholder="答えを入力"></textarea></div>
+      <div class="sem-row"><span class="sem-lbl">補足</span><textarea class="sem-input" id="fem-n" rows="2" placeholder="補足（任意）"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="ebtn dan sm" id="fem-del-btn" style="display:none" onclick="deleteFlashCard()">🗑 削除</button>
+      <button class="ebtn pri" onclick="saveFlashCard()">💾 保存</button>
+    </div>
+  </div>
+</div>
+<!-- アコーディオン 編集モーダル -->
+<div id="acc-edit-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-hd"><span id="aem-title">📝 項目編集</span><button class="modal-close" onclick="closeAccEdit()">✕</button></div>
+    <div class="modal-body">
+      <div class="sem-row"><span class="sem-lbl">タイトル</span><input type="text" class="sem-input" id="aem-ttl" placeholder="タイトルを入力" style="width:100%"></div>
+      <div class="sem-row" style="margin-top:6px"><span class="sem-lbl">内容</span><textarea class="sem-input" id="aem-body" rows="8" placeholder="テキストまたはHTMLで入力"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="ebtn dan sm" id="aem-del-btn" style="display:none" onclick="deleteAccCard()">🗑 削除</button>
+      <button class="ebtn pri" onclick="saveAccCard()">💾 保存</button>
+    </div>
+  </div>
+</div>
+<nav class="bnav">
+  <button class="ni active" id="nav-top" onclick="goPage('p-top')"><div class="nicon">🏠</div><div class="nlbl">ホーム</div></button>
+  <button class="ni" id="nav-shiko" onclick="goPage('p-shiko')"><div class="nicon">🏛️</div><div class="nlbl">式典情報</div></button>
+  <button class="ni" id="nav-jushoku" onclick="goPage('p-jushoku')"><div class="nicon">🧎</div><div class="nlbl">司式者</div></button>
+  <button class="ni" id="nav-ostudy" onclick="goPage('p-ostudy')"><div class="nicon">📖</div><div class="nlbl">お勉強</div></button>
+</nav>
+<script>
+const SHIKITEN_DATA=[{"name": "大正寺", "area": "新倉", "sect": "浄土真宗本願寺派", "yamagou": "寶松山", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "ご住職が立って座って一呼吸おいて仏説阿弥陀経", "dokkyou": "約25分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "親族用焼香台を出して式場内整ってから開式の辞\n通夜法話あり（御文書）"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中「ごごうししゅうしょ…」", "dokkyou": "約30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": ""}}, {"name": "如来寺", "area": "新倉", "sect": "浄土真宗本願寺派", "yamagou": "大原山", "tsuya": {"narimono": "大鈴（右）", "ippan": "親族焼香の後", "shinzoku": "脇導師が一礼・正信偈に入って暫くから", "dokkyou": "約40分", "omzen": "なし", "kakimono": "法名額", "shohichi": "本導師になる人によって変わる", "notes": "通夜法話あり（御文書）\n通夜ピンマイクは脇導師\n軽机に水用意"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "脇導師が一礼・正信偈の途中「ごごうししゅうしょ…」", "dokkyou": "約40分", "omzen": "なし", "kakimono": "法名額", "shohichi": "", "notes": ""}}, {"name": "正福寺", "area": "新倉", "sect": "浄土真宗本願寺派", "yamagou": "新倉山", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "仏説阿弥陀経", "dokkyou": "約25分", "omzen": "なし", "kakimono": "法名額（式場に用）", "shohichi": "お経が始まったらすぐ", "notes": "通夜葬儀両日法話あり（御文書）\n入退場時、導師の一礼に合わせてお辞儀をする\n弁当は千円弁当\nお布施はホールでは渡さない（寺に連絡して後）"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": ""}}, {"name": "福源寺", "area": "下吉田", "sect": "浄土真宗本願寺派", "yamagou": "聖徳山", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "仏説阿弥陀経", "dokkyou": "約20〜30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "通夜法話あり（読み物）\n入場前に開式の辞\n法名＋俗名で紹介"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約20〜30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "遺影は左、遺骨は右にセット\nお布施は後日"}}, {"name": "福善寺", "area": "小沼", "sect": "浄土真宗本願寺派", "yamagou": "", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "合図あり（10分後くらい）", "dokkyou": "約45分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "", "notes": ""}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約40分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "", "notes": ""}}, {"name": "専念寺", "area": "都留", "sect": "真宗大谷派", "yamagou": "向富山", "tsuya": {"narimono": "小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "仏説阿弥陀経・導師より合図あり", "dokkyou": "約35分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "お経が始まったらすぐ", "notes": ""}, "sougi": {"narimono": "小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約40分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "お経が始まったらすぐ", "notes": ""}}, {"name": "西方寺", "area": "小明見", "sect": "浄土宗", "yamagou": "引接山", "tsuya": {"narimono": "木魚・小鈴・大鈴（大鈴を8回打ったら）", "ippan": "2回目の木魚（仏説阿弥陀経）", "shinzoku": "2回目の木魚（仏説阿弥陀経）", "dokkyou": "約45分", "omzen": "普通にセット・箸は立てて", "kakimono": "位牌10号（ワンプ必ず外す）・七尺塔婆・無常旗・七本中長", "shohichi": "初七日の入ったら", "notes": "葬儀式と告別式を分けて進行\n大傘の高さ注意（天井）\n鳴り物は前住職は叩かない\n通夜は現住職、葬儀は前住職が本導師が多い\n七尺塔婆は寺が用意"}, "sougi": {"narimono": "木魚・小鈴・大鈴", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約45分", "omzen": "法話有り", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "萬年寺", "area": "小明見", "sect": "浄土宗", "yamagou": "三寶山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "木魚", "dokkyou": "約35分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・六尺塔婆・無常旗（天蓋付き）・大傘", "shohichi": "お経に入ったら", "notes": "葬儀と告別式を分けて進行\n脳師が付く時は西方寺と同じ\n大傘の高さ注意（天井）\nワンプ外しておく\n小天香立てておく"}, "sougi": {"narimono": "木魚・大鈴", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約40分 法話有り", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "東圓寺", "area": "忍草", "sect": "天台宗", "yamagou": "忍草山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水・散水杖・印・導師用水", "ippan": "お経が始まったらすぐ", "shinzoku": "導師より合図あり", "dokkyou": "約30分", "omzen": "逆さ膳にする", "kakimono": "位牌8号・ワンプ外す・塔婆6尺・七本中長", "shohichi": "お経が始まったらすぐ", "notes": "初七日を寺で行う場合すぐに生花ポットを寺に届ける\nうどん食べる（ネギ抜き）\n基本は12時式\nうどん食べる場合は弁当不要\n出棺経で別れの盃をする・焼香はまわさない"}, "sougi": {"narimono": "木魚・小鈴・大鈴・酒水・散水杖・別れの盃・導師用水", "ippan": "別の盃のあと 導師より合図あり", "shinzoku": "引導後導師より合図あり", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "司会必要"}}, {"name": "西念寺", "area": "上吉田", "sect": "時宗", "yamagou": "吉積山", "tsuya": {"narimono": "木魚・大鈴", "ippan": "始まったらすぐ", "shinzoku": "木魚", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てて あっても気にしない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "始まったらすぐ", "notes": ""}, "sougi": {"narimono": "木魚・大鈴", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "食事 通夜・総中払い食べるか 要確認"}}, {"name": "月江寺", "area": "下吉田", "sect": "臨済宗妙心寺派", "yamagou": "水上山", "tsuya": {"narimono": "木魚・大鈴・脳机の上に小鈴", "ippan": "なるべく後", "shinzoku": "お膳を回して、振り返ったら", "dokkyou": "約30分（法話含めると50分）", "omzen": "普通にセット", "kakimono": "位牌8号・ワンプ外す", "shohichi": "葬儀の日は法話有り", "notes": "お布施は当日渡さない後日お寺に出向いて渡す\n出棺経で松明使用\n基本は中か後火葬\n机のセットの仕方が特殊\n弁当なし（役僧の分は用意）\n入場後、住職が前に進み立ち止まったら開式の辞"}, "sougi": {"narimono": "木魚・大鈴・脳机の上に小鈴・印金・香炉", "ippan": "なるべく後", "shinzoku": "引導後、お膳を回して振り返ったら", "dokkyou": "約40分（法話含めると60分）", "omzen": "", "kakimono": "", "shohichi": "", "notes": "焼香はすぐ"}}, {"name": "通玄寺", "area": "鳴沢", "sect": "臨済宗妙心寺派", "yamagou": "成濤山", "tsuya": {"narimono": "大鈴・小鈴（右側にセット）", "ippan": "すぐ", "shinzoku": "導師より合図あり・手を上げる", "dokkyou": "約20分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・ワンプなし", "shohichi": "小天香不要・お経が始まったらすぐ", "notes": "両日持帰り弁当なし（代わりに葬儀後水を1ケース）\n小天香は通夜のみ火をつけて横寝かせで置く\n抹香・小ローソクは下げて置く\n式前説明で読経の長さ言わない\n通夜は式場からそのまま帰る"}, "sougi": {"narimono": "鳴物持参・小天香不要", "ippan": "すぐ", "shinzoku": "引導後", "dokkyou": "約35分", "omzen": "", "kakimono": "孝年記載なし", "shohichi": "初七日後にお布施", "notes": ""}}, {"name": "寿徳寺", "area": "平野", "sect": "臨済宗妙心寺派", "yamagou": "海雲山", "tsuya": {"narimono": "印金持参・脳導師が付く時は太鼓・妙鉢", "ippan": "5分後くらい", "shinzoku": "20分後くらい引導後 観音経（世尊偈）から", "dokkyou": "約35分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本平塔婆", "shohichi": "小天香不要", "notes": "納骨が寺の場合合生花ポットもしくは花束必要（特に平野）\n山中の場合は納骨立会わない\n弁当なし"}, "sougi": {"narimono": "印金持参・脳導師が付く時は太鼓・妙鉢", "ippan": "5分後くらい", "shinzoku": "20分後くらい引導後 観音経（世尊偈）から", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "海蔵寺", "area": "大石", "sect": "臨済宗妙心寺派", "yamagou": "龍水山", "tsuya": {"narimono": "木魚・小鈴・大鈴（大鈴を左に）", "ippan": "小天香を立てたら", "shinzoku": "木魚", "dokkyou": "法話含めると約60分", "omzen": "逆さ膳・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "お経が始まったらすぐ 木魚・大鈴・小鈴", "notes": "通夜法話あり\n導師の机に飲み水用意\n食事参加することが多い\n寺菓子用意"}, "sougi": {"narimono": "太鼓・妙鉢", "ippan": "小天香を立てたら", "shinzoku": "引導後のお経から", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "承天寺", "area": "内野", "sect": "臨済宗妙心寺派", "yamagou": "医王山", "tsuya": {"narimono": "木魚・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "約10分後 頃を見計らい", "dokkyou": "約35分", "omzen": "", "kakimono": "位牌8号・5尺塔婆・七本平", "shohichi": "", "notes": "ワンプは外しておく\n弁当なし（役僧の分は用意）"}, "sougi": {"narimono": "印金・立って座って印金の合図", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "地蔵寺", "area": "上吉田", "sect": "臨済宗妙心寺派", "yamagou": "法輪山", "tsuya": {"narimono": "木魚・大鈴・小鈴を連打", "ippan": "お経が始まったらすぐ", "shinzoku": "観音経（世尊偈）・小鈴を連打", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・上仏衣", "shohichi": "お経が始まったらすぐ 木魚・大鈴・小鈴", "notes": "導師対応丁寧に\n本位牌は四十九日ではなく新盆までに作ればOK\n納棺時のり・箸・墨と上仏衣をセットで用意"}, "sougi": {"narimono": "鳴物持参", "ippan": "すぐ", "shinzoku": "引導後 観音経（世尊偈）から", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "吉祥寺", "area": "上吉田", "sect": "臨済宗妙心寺派", "yamagou": "如意山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "木魚", "shinzoku": "小鈴を鳴らし立って座った御膳を回します", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "お経が始まったらすぐ", "notes": "小ローソク・時計は外しておく\n時間にかなりルーズ"}, "sougi": {"narimono": "鳴物持参", "ippan": "お経が始まったらすぐ", "shinzoku": "引導後 観音経（世尊偈）から", "dokkyou": "約40分", "omzen": "", "kakimono": "葬儀の前に木魚・大鈴・ワンプ外す・小鈴", "shohichi": "", "notes": ""}}, {"name": "一乗寺", "area": "小沼", "sect": "臨済宗妙心寺派", "yamagou": "不二山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "大悲呪（開式15分経ったら）", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本平", "shohichi": "焼香はすぐ 法話あり", "notes": "ワンプは外しておく"}, "sougi": {"narimono": "木魚・小鈴・大鈴・太鼓・妙鉢", "ippan": "お経が始まったら", "shinzoku": "引導後、木魚", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "慈光院", "area": "大明見", "sect": "臨済宗妙心寺派", "yamagou": "", "tsuya": {"narimono": "小鈴・大鈴", "ippan": "お経が始まったら", "shinzoku": "約10分後 頃合いを見て", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号（葬儀の前にワンプ外す）", "shohichi": "法話あり・小天香不要", "notes": "年齢は「享年」\n一人の時は通夜葬儀とも小鈴・大鈴。初七日は木魚・大鈴"}, "sougi": {"narimono": "太鼓・妙鉢・印金", "ippan": "", "shinzoku": "引導後のお経から", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "円通寺", "area": "船津", "sect": "臨済宗妙心寺派", "yamagou": "広大山", "tsuya": {"narimono": "木魚・大鈴", "ippan": "10分後くらい 木魚", "shinzoku": "大悲呪", "dokkyou": "約35分", "omzen": "ご飯と水のみ・箸は立てない", "kakimono": "位牌8号", "shohichi": "日が終わって焼香は初七から", "notes": "持帰り弁当なし\n木魚の袴を持参\nお布施時に葬儀膳を渡されるので四十九日まで使用\n小天香立てておいても良い"}, "sougi": {"narimono": "鳴物持参 木魚・大鈴", "ippan": "10分後くらい", "shinzoku": "25分後くらい 引導後（観音経）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "机にマイク用意"}}, {"name": "東光寺", "area": "長浜", "sect": "臨済宗妙心寺派", "yamagou": "タイショウ山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "いつでも良い", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七平", "shohichi": "お経が始まったらすぐ 木魚・大鈴", "notes": ""}, "sougi": {"narimono": "小鈴・印金・太鼓・妙鉢", "ippan": "", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "福昌寺", "area": "上暮地", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "大鈴・小鈴・線香", "ippan": "お経が始まったらすぐ", "shinzoku": "いつでも良い", "dokkyou": "約40分", "omzen": "普通にセット", "kakimono": "位牌の前に小机を用意してその上に", "shohichi": "3つ目のお経から", "notes": "通夜・葬儀・初七日全て小天香使用（火をつけ横寝かせで香炉に置く）\n祭壇・写真・お膳・香炉など全てまっすぐ並べてセット\n初七日前に位牌の紙を取換え\n炭は横にして香炉の下側に置く"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・脳机は向かい合わせ・線香", "ippan": "", "shinzoku": "大悲心陀羅尼 引導後（観世音菩薩普門品偈）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "外した位牌の紙は骨壷の箱へ"}}, {"name": "宝鏡寺", "area": "東桂", "sect": "曹洞宗", "yamagou": "金鷲山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "20分後", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "8号位牌・五尺塔婆・七本平", "shohichi": "", "notes": "法話有っても案内不要\n引導で喝を入れる"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机は向かい合わせ", "ippan": "", "shinzoku": "引導後 修証義", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "宝養寺", "area": "倉見", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "大悲心陀羅尼「生を明らめ死を明らむるは佛家一大事の因縁なり」", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本平", "shohichi": "", "notes": ""}, "sougi": {"narimono": "太鼓・妙鉢・印金・松明", "ippan": "", "shinzoku": "引導後の木魚", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "仏眼寺", "area": "下暮地", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "修証義", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本平", "shohichi": "", "notes": "足の具合大分悪いので注意\n線香は下げない"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水", "ippan": "お経が始まったら", "shinzoku": "引導後（合図あり・ウインク）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "広徳院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "いつでも良い", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号（10号の場合あり）・塔婆・七本平", "shohichi": "", "notes": ""}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水", "ippan": "お経が始まったら", "shinzoku": "引導後 修証義", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "泉福院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "受戒のあとの修証義", "dokkyou": "約45分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号（10号の場合あり）・塔婆・七本平", "shohichi": "", "notes": ""}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机向かい合わせ", "ippan": "お経が始まったら", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "深泉院", "area": "", "sect": "曹洞宗", "yamagou": "如意山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水・手磬（印金）・松明", "ippan": "お経が始まったらすぐ", "shinzoku": "修証義", "dokkyou": "約35分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本", "shohichi": "お経が始まったらすぐ 30分", "notes": "ご詠歌あり"}, "sougi": {"narimono": "手磬（印金）・松明・酒水", "ippan": "お経が始まったら", "shinzoku": "引導後（合図あり）", "dokkyou": "約50分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "楼月院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "遺教経（ゆいきょうぎょう）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "通夜法話あり"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机向かい合わせ", "ippan": "お経が始まったら", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "長徳院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "", "ippan": "", "shinzoku": "", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆", "shohichi": "", "notes": "両日、式前に弁当を控室で食べる"}, "sougi": {"narimono": "", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "龍泉寺", "area": "精進", "sect": "曹洞宗", "yamagou": "石花山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水・印金", "ippan": "お経が始まったらすぐ", "shinzoku": "開式10分後くらいでころを見計らい", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本中長", "shohichi": "", "notes": "通夜法話あり\n初七日用に弁当（霊供膳）必要\n甲府のお寺と兼任\n葬儀では小天香は三本くらい用意\n三送の儀"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・妙鉢 脳机向かい合わせ・右に木魚左に大鈴", "ippan": "お経が始まったら", "shinzoku": "引導後すぐ", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "江岸寺", "area": "本栖", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "修証義 導師より合図あり", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "8号位牌・七本中長・塔婆", "shohichi": "", "notes": "通夜法話あり\n初七日用に弁当（霊供膳）必要\n別れの盃、三送の儀あり"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机向かい合わせ", "ippan": "お経が始まったら", "shinzoku": "引導後 修証義", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "菅門寺", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・大鈴", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "位牌大木・七本中長（七尺塔婆）", "shohichi": "", "notes": "七尺塔婆は寺が用意\n通夜、小天香は火を付けて横寝かせ\n葬儀で小天香三本使用"}, "sougi": {"narimono": "印金・大鼓・ドラ", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "上行寺", "area": "上吉田", "sect": "日蓮宗", "yamagou": "身延山別院", "tsuya": {"narimono": "木魚・大鈴・印金", "ippan": "すぐ", "shinzoku": "いつでも良い", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・6尺塔婆・七本", "shohichi": "", "notes": "基本送迎が必要\n経机に位牌台を用意\n食事参加の場合多い\n脳机マイク不要"}, "sougi": {"narimono": "木魚・大鈴・印金・鳴物持参（導師3人の場合は鋼鑼を貸し出す）", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "蓮華寺", "area": "大嵐", "sect": "日蓮宗", "yamagou": "", "tsuya": {"narimono": "木枠・大鈴・印金（右）（左）", "ippan": "開式後すぐ", "shinzoku": "開式約35分後 導師より合図あり（振り向く）", "dokkyou": "約45分", "omzen": "右側にセット・箸は立てない", "kakimono": "位牌8号・六尺塔婆・七本中長・ワンプ外さない", "shohichi": "お経が始まったらすぐ", "notes": "基本送迎が必要\n経机に位牌台を用意\n食事参加の場合多い\n脳机マイク不要"}, "sougi": {"narimono": "木枠・大鈴・鳴物持参", "ippan": "お経に入ったら", "shinzoku": "引導後のお経から", "dokkyou": "約50分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "妙法寺", "area": "小立", "sect": "法華宗", "yamagou": "", "tsuya": {"narimono": "木枠・大鈴", "ippan": "木枠の後 大鈴が二回鳴ったら", "shinzoku": "開式約15分後", "dokkyou": "約45分", "omzen": "右にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・上仏衣・無常旗・ワンプ外す", "shohichi": "お経が始まったらすぐ（焼香台・イスは葬儀・七日で親族焼香が終わり そうな頃おしぼりを大鈴の導師へ）", "notes": "通夜法話あり\n通夜・葬儀・初七日全ての式で小天香は必ず立てておく\n司会者は脳導師の紹介不要「妙法寺様」だけでよい\n前火葬時、火葬場で弁当渡す\n七日後エントランスで3回まわる"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠の後 大鈴が二回鳴ったら", "shinzoku": "引導に入って本導師が立ち上がったら", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "常在寺", "area": "小立", "sect": "法華宗", "yamagou": "如意山", "tsuya": {"narimono": "木枠・大鈴・印金", "ippan": "木枠が合図", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約45分", "omzen": "葬儀は右にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・無常旗（勝山のみ）", "shohichi": "お経が始まったらすぐ", "notes": "通夜法話あり\n七日後エントランスで3回まわる\nワンプ外しておく\n住職が本導師なら飲み水を机に\n小天香立てる"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "妙本寺", "area": "勝山", "sect": "法華宗", "yamagou": "法輪山", "tsuya": {"narimono": "木枠・大鈴・印金", "ippan": "木枠が合図", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・無常旗", "shohichi": "お経が始まったらすぐ", "notes": "通夜法話あり\n常在寺の本尊使用\n納棺時、湯灌を行う\n自宅出棺時、無常旗使用"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "霊松院", "area": "新屋", "sect": "法華宗", "yamagou": "日光山", "tsuya": {"narimono": "木枠・大鈴・鈴", "ippan": "木枠が合図", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約45分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "", "notes": ""}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "常照寺", "area": "松山", "sect": "法華宗", "yamagou": "福松山", "tsuya": {"narimono": "木枠・大鈴・印金", "ippan": "木枠が合図", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・無常旗", "shohichi": "", "notes": "通夜法話あり\n御本尊は両日常在寺のを使う\n役僧で常在寺来る場合控室の札は「常在寺」で用意"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "真蔵院", "area": "大月", "sect": "真言宗", "yamagou": "", "tsuya": {"narimono": "大鈴・木魚", "ippan": "お経始まってすぐ", "shinzoku": "ころを見計らい", "dokkyou": "約40分", "omzen": "", "kakimono": "位牌8号", "shohichi": "読経後すぐ", "notes": "お布施のお礼は七日の後\n大月の寺院"}, "sougi": {"narimono": "", "ippan": "10分後くらいに立って座って木魚の合図", "shinzoku": "ころを見計らい", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "覚宝寺", "area": "大月", "sect": "日蓮正宗", "yamagou": "", "tsuya": {"narimono": "木魚・大蕉", "ippan": "すぐ", "shinzoku": "手を上げて合図あり（5〜10分後）", "dokkyou": "法話入れて約45分", "omzen": "無くてもよい", "kakimono": "位牌大小", "shohichi": "", "notes": "通夜法話あり\n小天香は不要、線香をそのまま置いておく\n骨や遺体を式場安置後にお経を上げる\n火葬場や会食も親族と同行"}, "sougi": {"narimono": "", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "真如苑", "area": "", "sect": "真如苑", "yamagou": "宗教法人", "tsuya": {"narimono": "大鈴・小鈴・酒水・小天香・回し香炉", "ippan": "すぐ", "shinzoku": "脳導師の焼香が終わったら（回し香炉使用）", "dokkyou": "約30分", "omzen": "使わない", "kakimono": "位牌", "shohichi": "", "notes": "黒の燭台・香炉使用\n学会のセット（扇子・榛など不要）\n小天香立てておく、導師の焼香は回し香炉\n炭は回し香炉に\n棺の窓は閉める"}, "sougi": {"narimono": "小鈴・印金・酒水・回し香炉", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "善導寺・長安寺", "area": "都留", "sect": "浄土宗", "yamagou": "", "tsuya": {"narimono": "両日 大鈴・木魚のみ（小天香は立てておく）", "ippan": "すぐ", "shinzoku": "約15分後 脳導師より合図あり", "dokkyou": "約30分", "omzen": "", "kakimono": "位牌10号（控室にのり用意・紙を配る）", "shohichi": "法話有り", "notes": "先に脳が入場して木魚をたたく アナウンスで本導師入場\n木魚が止んだら開式の辞\n通夜は本導師が退場し、閉式のアナウンスを入れるまで脳が木魚をたたき続ける\n退席時、本導師は立ったり座ったりするので、イスひき慎重に"}, "sougi": {"narimono": "基本は導師二名", "ippan": "", "shinzoku": "引導後 脳導師より合図あり", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}];
+const JUSHOKU_DATA=[{"area": "富士吉田", "name": "吉祥寺", "yomi": "きちじょうじ", "address": "上吉田7-10-7", "tel": "0555-22-5081", "fax": "0555-22-5081", "mobile": "090-4948-4364", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "小ローソク・時計は外しておく\n時間にかなりルーズ"}, {"area": "富士吉田", "name": "月江寺", "yomi": "げっこうじ", "address": "下吉田3-26-18", "tel": "0555-23-4000", "fax": "0555-23-4445", "mobile": "080-6255-6123", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・4尺", "todokesaki": "寺", "nokan": "無（火葬場も行かない）", "notes": "お布施は後日お寺に出向いて渡す\n出棺経で松明使用\n机のセットの仕方が特殊"}, {"area": "富士吉田", "name": "慈光院", "yomi": "じこういん", "address": "大明見1-3", "tel": "0555-20-1033", "fax": "0555-20-1033", "mobile": "090-3479-1157", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": "年齢は「享年」"}, {"area": "富士吉田", "name": "地蔵寺", "yomi": "じぞうじ", "address": "上吉田5-5-25", "tel": "0555-23-1197", "fax": "", "mobile": "090-2229-3390", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣・杖", "todokesaki": "寺", "nokan": "有（一緒に納棺）", "notes": "導師対応丁寧に\n本位牌は新盆までに作ればOK\n納棺時のり・箸・墨と上仏衣をセット"}, {"area": "富士吉田", "name": "正福寺", "yomi": "しょうふくじ", "address": "浅間1-5-38", "tel": "0555-22-0850", "fax": "0555-22-7395", "mobile": "090-7019-0986", "sect": "浄土真宗本願寺派", "kyonen": "満年齢＋1", "kakimono": "法名額", "todokesaki": "式場", "nokan": "前火葬有・中後火葬無", "notes": "通夜葬儀両日法話あり\n弁当は千円弁当\nお布施はホールでは渡さない"}, {"area": "富士吉田", "name": "大正寺", "yomi": "だいしょうじ", "address": "浅間1-2-1", "tel": "0555-22-1017", "fax": "0555-24-7676", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "前火葬有（中後無）", "notes": "基本は後火葬、終わってから初七日法要\n通夜法話あり"}, {"area": "富士吉田", "name": "如来寺", "yomi": "にょらいじ", "address": "浅間1-5-6", "tel": "0555-22-1823", "fax": "0555-22-7317", "mobile": "090-3146-0750", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "前有", "notes": "送迎要確認"}, {"area": "富士吉田", "name": "如来寺（晃徳）", "yomi": "にょらいじ（こうとく）", "address": "船津1541", "tel": "0555-73-8175", "fax": "", "mobile": "090-3570-3373", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "", "notes": "如来寺次男"}, {"area": "富士吉田", "name": "福源寺", "yomi": "ふくげんじ", "address": "下吉田3-41-18", "tel": "0555-23-7733", "fax": "0555-23-7903", "mobile": "090-3677-8823（副）", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "無（火葬場も行かない）", "notes": "副住職東京から来る\n葬儀は13:00以降に\n遺影は左、遺骨は右にセット"}, {"area": "富士吉田", "name": "西念寺", "yomi": "さいねんじ", "address": "上吉田7-7-1", "tel": "0555-22-0847", "fax": "0555-22-1192", "mobile": "090-3318-1658", "sect": "時宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "食事 通夜・総中払い食べるか 要確認"}, {"area": "富士吉田", "name": "西方寺", "yomi": "さいほうじ", "address": "小明見2-18-27", "tel": "0555-22-0299", "fax": "0555-22-0499", "mobile": "", "sect": "浄土宗", "kyonen": "行年表", "kakimono": "猫丸・七本（中長）・無常旗（位牌→喪家）", "todokesaki": "寺", "nokan": "有", "notes": "お膳は用意しない\n納棺時カミソリ・半紙・のりを用意\n寺へ大傘を借りる"}, {"area": "富士吉田", "name": "善導寺", "yomi": "ぜんどうじ", "address": "上吉田2-11-14", "tel": "0555-22-4126", "fax": "", "mobile": "", "sect": "浄土宗", "kyonen": "満年齢＋1", "kakimono": "", "todokesaki": "要確認", "nokan": "要確認", "notes": ""}, {"area": "富士吉田", "name": "万年寺", "yomi": "まんねんじ", "address": "小明見12-6071", "tel": "0555-22-3370", "fax": "", "mobile": "", "sect": "浄土宗", "kyonen": "行年表", "kakimono": "猫丸・七本（中長）・無常旗（位牌→喪家）", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認\n納棺時カミソリ・半紙・のりを用意\n寺へ大傘を借りる"}, {"area": "富士吉田", "name": "上行寺", "yomi": "じょうぎょうじ", "address": "上吉田38", "tel": "0555-22-1078", "fax": "0555-25-7008", "mobile": "080-2089-8314", "sect": "日蓮宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認"}, {"area": "富士吉田", "name": "常照寺", "yomi": "じょうしょうじ", "address": "松山2-10-12", "tel": "0555-24-3940", "fax": "", "mobile": "090-1882-8575", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる"}, {"area": "富士吉田", "name": "福昌寺", "yomi": "ふくしょうじ", "address": "上暮地3-1-1", "tel": "0555-22-3084", "fax": "0555-22-3041", "mobile": "090-4622-6866", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "富士吉田", "name": "霊松院", "yomi": "れいしょういん", "address": "新屋242", "tel": "0555-24-2068", "fax": "0555-25-7117", "mobile": "090-8684-7903", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・無常旗・仏衣", "todokesaki": "寺", "nokan": "有", "notes": ""}, {"area": "河口湖", "name": "円通寺", "yomi": "えんつうじ", "address": "船津3932", "tel": "0555-72-0279", "fax": "0555-72-4499", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": "円通寺のみの時、寺弁当は用意しない\n持帰り弁当なし"}, {"area": "河口湖", "name": "海蔵寺", "yomi": "かいぞうじ", "address": "大石1220", "tel": "0555-76-7721", "fax": "0555-76-7783", "mobile": "090-8857-1909", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "式名札と脳師へ\n通夜法話あり\n食事参加することが多い\n寺菓子用意"}, {"area": "河口湖", "name": "河口善応寺", "yomi": "ぜんおうじ", "address": "河口160", "tel": "0555-76-6843", "fax": "", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "河口湖", "name": "東光寺", "yomi": "とうこうじ", "address": "長浜625", "tel": "0555-82-2136", "fax": "", "mobile": "090-8854-0439", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "要確認", "notes": ""}, {"area": "河口湖", "name": "常在寺", "yomi": "じょうざいじ", "address": "小立139", "tel": "0555-72-1559", "fax": "0555-72-8986", "mobile": "090-4923-1754", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる\n七日後エントランスで3回まわる\n小天香立てる"}, {"area": "河口湖", "name": "妙法寺", "yomi": "みょうほうじ", "address": "小立692", "tel": "0555-72-1542", "fax": "0555-72-1751", "mobile": "080-5501-4800 / 090-1083-6355（代理）", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣・無常旗", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる\n枕経の時間伝える\n通夜・葬儀・初七日全て小天香必ず立てる\n七日後エントランスで3回まわる"}, {"area": "河口湖", "name": "妙本寺", "yomi": "みょうほんじ", "address": "勝山609", "tel": "0555-83-2207", "fax": "", "mobile": "", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・無常旗", "todokesaki": "寺", "nokan": "有（一緒に納棺）", "notes": "自宅出棺時、無常旗使用\n告別式前にうどんを食べる"}, {"area": "河口湖", "name": "蓮華寺", "yomi": "れんげじ", "address": "大嵐6", "tel": "0555-82-2139", "fax": "", "mobile": "090-3069-0897", "sect": "日蓮宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認\n食事 通夜・告別式前・昼中払い 要確認\n脳机マイク不要"}, {"area": "河口湖", "name": "龍泉寺", "yomi": "りゅうせんじ", "address": "精進", "tel": "055-284-2015", "fax": "", "mobile": "090-3246-3919（野沢）", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "要確認", "nokan": "有", "notes": "（南アルプス市 梅本様）"}, {"area": "河口湖", "name": "江岸寺", "yomi": "こうがんじ", "address": "本栖318", "tel": "0555-87-2422", "fax": "0555-87-2422", "mobile": "", "sect": "曹洞宗", "kyonen": "満年齢＋1", "kakimono": "猫丸・5尺・七本（平）・仏衣・杖", "todokesaki": "寺", "nokan": "有", "notes": "富士ケ嶽は納棺後、旅支度 本栖は読経中に旅支度\n初七日法要お膳を変える（昼中払いの膳料で可）"}, {"area": "西桂", "name": "一乗院", "yomi": "いちじょういん", "address": "小沼232", "tel": "0555-25-2726", "fax": "", "mobile": "", "sect": "真如苑", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "西桂", "name": "長得院", "yomi": "ちょうとくいん", "address": "小沼1469-5", "tel": "0555-25-3326", "fax": "", "mobile": "090-4058-3965", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "西桂", "name": "仏眼寺", "yomi": "ぶつげんじ", "address": "下暮地1162", "tel": "0555-25-2437", "fax": "", "mobile": "090-2227-4127", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": "自宅に住職が枕経・出棺経に来るときは足が悪いのでイスを用意"}, {"area": "西桂", "name": "宝養寺", "yomi": "ほうようじ", "address": "倉見954", "tel": "0555-25-2317", "fax": "", "mobile": "090-2206-3705", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "西桂", "name": "一乗寺", "yomi": "いちじょうじ", "address": "小沼1997", "tel": "0555-25-2031", "fax": "0555-73-8022", "mobile": "090-4847-9029", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "要確認", "nokan": "要確認", "notes": ""}, {"area": "西桂", "name": "福善寺", "yomi": "ふくぜんじ", "address": "小沼1990", "tel": "0555-25-3366", "fax": "0555-72-8025", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": ""}, {"area": "西桂", "name": "宝鏡寺", "yomi": "ほうきょうじ", "address": "東桂", "tel": "0554-43-4459", "fax": "0554-43-8681", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "", "notes": "寳鏡寺"}, {"area": "その他", "name": "承天寺", "yomi": "じょうてんじ", "address": "内野192", "tel": "0555-84-2356", "fax": "0555-84-3988", "mobile": "090-6991-0520", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "要確認", "nokan": "要確認", "notes": "（住職不在の為）"}, {"area": "その他", "name": "東圓寺", "yomi": "とうえんじ", "address": "忍草38", "tel": "0555-84-4114", "fax": "0555-84-4104", "mobile": "090-4735-1808", "sect": "天台宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "入電は副住職\n初七日を寺で行う場合は本堂に花・菓子・果物を用意する"}, {"area": "その他", "name": "慧光寺", "yomi": "えこうじ", "address": "忍草3250", "tel": "0555-84-8082", "fax": "0555-84-8122", "mobile": "", "sect": "浄土真宗木辺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "寿徳寺", "yomi": "じゅとくじ", "address": "平野147", "tel": "0555-65-8209", "fax": "0555-20-3050", "mobile": "090-8779-5908", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "有", "notes": "納骨が寺の場合合生花ポット\n山中の場合は納骨立会わない"}, {"area": "その他", "name": "通玄寺", "yomi": "つうげんじ", "address": "鳴沢村251", "tel": "0555-85-2017", "fax": "", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "満年齢", "kakimono": "猫丸（ワンプなし）", "todokesaki": "寺", "nokan": "無", "notes": ""}, {"area": "その他", "name": "真澄寺別院", "yomi": "", "address": "大石2585", "tel": "0555-76-8201", "fax": "", "mobile": "", "sect": "真如苑", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "瑞蓮寺", "yomi": "", "address": "一宮町田中408", "tel": "0553-47-0572", "fax": "0553-47-4478", "mobile": "", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "円福寺", "yomi": "えんぷくじ", "address": "道志村久保2355", "tel": "0554-52-2840", "fax": "0463-88-4736", "mobile": "090-4847-7168", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "永寿院", "yomi": "えいじゅいん", "address": "十日市場603", "tel": "0554-43-3919", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "耕雲院", "yomi": "こううんいん", "address": "夏狩1884", "tel": "0554-43-2593", "fax": "0554-45-4618", "mobile": "090-1543-2379", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "広教寺", "yomi": "こうきょうじ", "address": "大幡1541", "tel": "0554-43-3329", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "広徳院", "yomi": "こうとくいん", "address": "境636", "tel": "0554-45-2523", "fax": "0554-45-2586", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "光照寺", "yomi": "こうしょうじ", "address": "鹿留1976", "tel": "0554-43-4288", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長泉院", "yomi": "ちょうせんいん", "address": "鹿留606", "tel": "0554-43-2883", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "要寺送迎"}, {"area": "都留・大月", "name": "普門寺", "yomi": "ふもんじ", "address": "御太刀1-21-22", "tel": "0554-43-3400", "fax": "0554-43-7880", "mobile": "090-4606-7783", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長生寺", "yomi": "ちょうしょうじ", "address": "下谷2954", "tel": "0554-43-2690", "fax": "0554-43-3587", "mobile": "090-9668-5378", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "宝鏡寺（都留）", "yomi": "ほうきょうじ", "address": "桂1047", "tel": "0554-43-4459", "fax": "0554-43-8681", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "寳鏡寺"}, {"area": "都留・大月", "name": "西光寺", "yomi": "さいこうじ", "address": "川茂114", "tel": "0554-43-3004", "fax": "", "mobile": "090-3094-4424", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "浄泉寺", "yomi": "じょうせんじ", "address": "川茂195", "tel": "0554-43-3321", "fax": "0554-43-8821", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "枕経を先に行う 時間伝える"}, {"area": "都留・大月", "name": "桂林寺", "yomi": "けいりんじ", "address": "金井397", "tel": "0554-43-3270", "fax": "FAXも同じ", "mobile": "090-3477-5411", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "清泉寺", "yomi": "せいせんじ", "address": "四日市場1129", "tel": "0554-43-3920", "fax": "0554-43-7886", "mobile": "090-3209-2721", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長慶寺", "yomi": "ちょうけいじ", "address": "夏狩240", "tel": "0554-43-3663", "fax": "", "mobile": "080-9977-7588", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "専念寺", "yomi": "せんねんじ", "address": "中央4-3-6", "tel": "0554-43-2904", "fax": "0554-43-2994", "mobile": "090-7264-7711", "sect": "真宗大谷派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長安寺", "yomi": "ちょうあんじ", "address": "上谷3-6-30", "tel": "0554-43-0850", "fax": "0554-43-0845", "mobile": "", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "善導寺兼務"}, {"area": "都留・大月", "name": "東漸寺", "yomi": "とうぜんじ", "address": "都留市中央4-3-1", "tel": "0554-43-3679", "fax": "", "mobile": "", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "無辺寺", "yomi": "むへんじ", "address": "大月2-9-20", "tel": "0554-23-1745", "fax": "", "mobile": "090-3346-5524", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "阿弥陀寺兼務"}, {"area": "紹介", "name": "慈照寺", "yomi": "じしょうじ", "address": "南巨摩郡身延町伊沼25", "tel": "0556-42-2439", "fax": "", "mobile": "090-7724-2266", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "よりそうお坊さん"}, {"area": "紹介", "name": "法善寺", "yomi": "ほうぜんじ", "address": "南アルプス市落合2099", "tel": "", "fax": "", "mobile": "090-2101-7676", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "小さなお葬式"}, {"area": "紹介", "name": "慈光院（甲府）", "yomi": "じこういん", "address": "甲府市徳行4-8-1", "tel": "055-237-7288", "fax": "", "mobile": "090-8209-8866", "sect": "臨済宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "小さなお葬式"}, {"area": "紹介", "name": "福應寺", "yomi": "ふくおうじ", "address": "甲州市塩山竹森798", "tel": "0553-33-3273", "fax": "0553-32-1338", "mobile": "090-1804-1856", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "よりそうお坊さん"}];
+
+let currentArea = '全域';
+let editMode = false;
+let jushokuEdits = {};
+try { jushokuEdits = JSON.parse(localStorage.getItem('jushokuEdits')||'{}'); } catch(e){}
+
+const NAV_MAP = {'p-top':'nav-top','p-shiko':'nav-shiko','p-jushoku':'nav-jushoku','p-ostudy':'nav-ostudy'};
+
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById(id);
+  if(pg) pg.classList.add('active');
+  if(NAV_MAP[id]) document.getElementById(NAV_MAP[id]).classList.add('active');
+  document.body.classList.remove('theme-top','theme-jushoku','theme-shiko');
+  if(id==='p-top') document.body.classList.add('theme-top');
+  else if(id==='p-shiko') document.body.classList.add('theme-shiko');
+  else if(id==='p-jushoku') document.body.classList.add('theme-jushoku');
+  // p-ostudy / p-quiz はテーマクラスなし＝既存の配色のまま（お勉強エリアは変更しない）
+  if(id==='p-jushoku') renderJushoku();
+  if(id==='p-quiz') {
+    document.querySelectorAll('.quiz-page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('topPage').classList.add('active');
+  }
+  window.scrollTo(0,0);
+}
+
+function switchTab(grp, id, btn) {
+  // タブボタンのactive解除
+  const tabsEl = document.getElementById(grp+'-tabs') || document.getElementById(grp+'-main-tabs');
+  if(tabsEl) tabsEl.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  // 対象tcの兄弟要素のみdeactivate（ネスト親を消さないように直接の子のみ対象）
+  const tc = document.getElementById('tc-'+id);
+  if(tc && tc.parentElement) {
+    Array.from(tc.parentElement.children).forEach(c=>{
+      if(c.classList.contains('tc')) c.classList.remove('active');
+    });
+  }
+  if(tc) tc.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+function cerTab(tid, which, btn) {
+  const tyEl = document.getElementById('cer-ty-'+tid);
+  const sgEl = document.getElementById('cer-sg-'+tid);
+  if(!tyEl||!sgEl) return;
+  if(which==='ty') { tyEl.style.display=''; sgEl.style.display='none'; }
+  else             { tyEl.style.display='none'; sgEl.style.display=''; }
+  const card = btn.closest('.card');
+  if(card) card.querySelectorAll('.cer-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function getSlots(km) { return (km%10===0)?(km/10)+1:Math.ceil(km/10); }
+
+function calcHanso() {
+  const km = parseFloat(document.getElementById('h-km').value)||0;
+  const night = document.getElementById('h-night').checked;
+  const nmin  = parseFloat(document.getElementById('h-nmin').value)||0;
+  if(km<=0){ alert('距離を入力してください'); return; }
+  const base = 12830, dist = getSlots(km)*4100;
+  const nightFee = night ? (2810 + Math.ceil(nmin/30)*1440) : 0;
+  const total = base + dist + nightFee;
+  document.getElementById('h-res-base').textContent  = '¥'+base.toLocaleString();
+  document.getElementById('h-res-dist').textContent  = '¥'+dist.toLocaleString()+' ('+getSlots(km)+'区分×¥4,100)';
+  document.getElementById('h-res-night').textContent = night ? '¥'+nightFee.toLocaleString() : '-';
+  document.getElementById('h-res-total').textContent = '¥'+total.toLocaleString();
+  document.getElementById('h-result').classList.add('show');
+  document.getElementById('h-night-row').style.display = night ? '' : 'none';
+}
+
+function calcReikyuu() {
+  const km = parseFloat(document.getElementById('r-km').value)||0;
+  if(km<=0){ alert('距離を入力してください'); return; }
+  const base = 18700, dist = getSlots(km)*6900, total = base+dist;
+  document.getElementById('r-res-base').textContent  = '¥'+base.toLocaleString();
+  document.getElementById('r-res-dist').textContent  = '¥'+dist.toLocaleString()+' ('+getSlots(km)+'区分×¥6,900)';
+  document.getElementById('r-res-total').textContent = '¥'+total.toLocaleString();
+  document.getElementById('r-result').classList.add('show');
+}
+
+function setArea(area, btn) {
+  currentArea = area;
+  document.querySelectorAll('#area-tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderJushoku();
+}
+
+function renderJushoku() {
+  const q = ((document.getElementById('j-search')||{}).value||'').toLowerCase();
+  let list = JUSHOKU_DATA.map((t,i)=>Object.assign({},t,jushokuEdits[i]||{},{_idx:i}));
+  if(currentArea!=='全域') list = list.filter(t=>t.area===currentArea);
+  if(q) list = list.filter(t=>['name','address','sect'].some(k=>(t[k]||'').toLowerCase().includes(q)));
+  const el = document.getElementById('j-list');
+  if(!el) return;
+  if(!list.length){ el.innerHTML='<div class="notice">該当する寺院がありません</div>'; return; }
+  el.innerHTML = list.map(t=>mkJCard(t)).join('');
+}
+
+function mkJCard(t) {
+  const i=t._idx, nm=t.name||'', addr=t.address||'', tel=t.tel||'',
+        cell=t.cell||'', fax=t.fax||'', sect=t.sect||'', age=t.age||'',
+        kaki=t.kakimono||'', note=t.note||'';
+  let chips='';
+  if(addr) chips+='<span class="chip addr">📍 '+addr+'</span>';
+  if(tel)  chips+='<span class="chip">📞 '+tel+'</span>';
+  if(cell) chips+='<span class="chip">📱 '+cell+'</span>';
+  if(fax)  chips+='<span class="chip">📠 '+fax+'</span>';
+  let detail='';
+  if(sect) detail+='<div class="row"><span class="lbl lv">宗派</span><span class="val">'+sect+'</span></div>';
+  if(age)  detail+='<div class="row"><span class="lbl">享年</span><span class="val">'+age+'</span></div>';
+  if(kaki) detail+='<div class="row"><span class="lbl">書き物</span><span class="val">'+kaki+'</span></div>';
+  if(note) detail+='<div class="note-box">'+note+'</div>';
+  let editForm='';
+  if(editMode) {
+    editForm='<div class="tdetail open">'
+      +'<div class="fg"><label>電話</label><input class="efield" value="'+tel+'" onchange="saveEdit('+i+',\'tel\',this.value)"></div>'
+      +'<div class="fg"><label>携帯</label><input class="efield" value="'+cell+'" onchange="saveEdit('+i+',\'cell\',this.value)"></div>'
+      +'<div class="fg"><label>FAX</label><input class="efield" value="'+fax+'" onchange="saveEdit('+i+',\'fax\',this.value)"></div>'
+      +'<div class="fg"><label>住所</label><input class="efield" value="'+addr+'" onchange="saveEdit('+i+',\'address\',this.value)"></div>'
+      +'<div class="fg"><label>書き物</label><input class="efield" value="'+kaki+'" onchange="saveEdit('+i+',\'kakimono\',this.value)"></div>'
+      +'<div class="fg"><label>備考</label><textarea class="efield" rows="2" onchange="saveEdit('+i+',\'note\',this.value)">'+note+'</textarea></div>'
+      +'</div>';
+  }
+  return '<div class="tcard">'
+    +'<div class="tname">'+nm+'</div>'
+    +(sect?'<div class="tsect">'+sect+'</div>':'')
+    +'<div class="tcontacts">'+chips+'</div>'
+    +(detail?'<button class="exp-btn" onclick="toggleDetail(\'td-'+i+'\',this)">詳細を見る ▼</button>'
+             +'<div class="tdetail" id="td-'+i+'">'+detail+'</div>':'')
+    +editForm+'</div>';
+}
+
+function toggleDetail(id,btn){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('open');
+  btn.textContent=el.classList.contains('open')?'閉じる ▲':'詳細を見る ▼';
+}
+function toggleEdit(){
+  editMode=!editMode;
+  const btn=document.getElementById('edit-toggle');
+  if(btn) btn.textContent=editMode?'✅ 編集完了':'✏️ 編集モード';
+  renderJushoku();
+}
+function saveEdit(idx,field,val){
+  if(!jushokuEdits[idx]) jushokuEdits[idx]={};
+  jushokuEdits[idx][field]=val;
+  try{localStorage.setItem('jushokuEdits',JSON.stringify(jushokuEdits));}catch(e){}
+}
+function exportJSON(){
+  const merged=JUSHOKU_DATA.map((t,i)=>Object.assign({},t,jushokuEdits[i]||{}));
+  const blob=new Blob([JSON.stringify(merged,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='jushoku_edited.json'; a.click();
+}
+function resetEdits(){
+  if(!confirm('全ての編集をリセットしますか？')) return;
+  jushokuEdits={};
+  try{localStorage.removeItem('jushokuEdits');}catch(e){}
+  renderJushoku();
+}
+function renderShikiten() {
+  SHIKITEN_DATA.forEach(function(t, i) {
+    function makeGrid(d) {
+      if(!d) return '';
+      const fields = [
+        ['鳴物', d.narimono],
+        ['一般焼香', d.ippan],
+        ['親族焼香', d.shinzoku],
+        ['読経', d.dokkyou],
+        ['お膳', d.omzen],
+        ['書き物', d.kakimono],
+        ['初七日', d.shohichi]
+      ];
+      let html = '<div class="cer-grid">';
+      fields.forEach(function(f){
+        if(f[1]) html += '<div class="cgi"><div class="cl">'+f[0]+'</div><div class="cv">'+f[1]+'</div></div>';
+      });
+      html += '</div>';
+      if(d.notes) html += '<div class="note-box">'+d.notes+'</div>';
+      return html;
+    }
+    // 寺院名・宗派ヘッダー
+    const header = '<div style="margin-bottom:8px;padding:6px 10px;background:var(--lv-bg);border-radius:var(--rs)">'
+      +'<span style="font-size:.78rem;font-weight:700;color:var(--lv)">'+t.sect+'</span>'
+      +(t.area ? ' <span style="font-size:.72rem;color:var(--tx2)">／ '+t.area+'</span>' : '')
+      +(t.yamagou ? ' <span style="font-size:.72rem;color:var(--tx2)">（'+t.yamagou+'）</span>' : '')
+      +'</div>';
+    const tyEl = document.getElementById('cer-ty-'+i);
+    const sgEl = document.getElementById('cer-sg-'+i);
+    if(tyEl) tyEl.innerHTML = header + makeGrid(t.tsuya);
+    if(sgEl) sgEl.innerHTML = header + makeGrid(t.sougi);
+  });
+}
+
+function openStudy(){
+  const sc=document.getElementById('study-screen');
+  if(sc){ sc.classList.add('visible'); initFlash(); switchStudyPage(0, document.querySelector('.st-bnav-btn')); }
+}
+function closeStudy(){
+  const sc=document.getElementById('study-screen');
+  if(sc) sc.classList.remove('visible');
+}
+function switchStudyPage(idx, btn){
+  document.querySelectorAll('.study-ch').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.st-bnav-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('sw-ch'+idx);
+  if(el) el.classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(idx===7) initFlash();
+}
+function toggleAcc(head){
+  const card=head.closest('.acc-card');
+  if(card) card.classList.toggle('open');
+}
+const STUDY_FLASH_CARDS=[{"q":"葬祭ディレクター1級の受験資格は？","a":"実務経験5年以上","n":"1級5年・2級2年"},{"q":"葬祭ディレクター2級の受験資格は？","a":"実務経験2年以上","n":"1級5年・2級2年"},{"q":"葬祭ディレクター試験の実技内容は？","a":"司会進行・接遇（ロールプレイ）","n":"筆記と実技の両方合格が必要"},{"q":"葬祭ディレクター1級の学科合格率は？","a":"約70%（実技は約80%）","n":"2級は学科80%・実技85%"},{"q":"葬祭ディレクター試験の認定機関は？","a":"葬祭ディレクター技能審査協会（厚生労働省認定）","n":"1983年創設"},{"q":"日本の葬儀で最も多い形式は？","a":"仏式（約90%）","n":"神式3%・キリスト教1%・無宗教6%"},{"q":"家族葬の一般的な参列人数は？","a":"10〜30人程度","n":"身内・親しい人のみで行う"},{"q":"直葬（火葬式）とは？","a":"通夜・葬儀を省き直接火葬場へ","n":"費用・時間の節約が目的"},{"q":"一日葬とは？","a":"通夜を省いて葬儀・告別式・火葬を一日で行う","n":"家族の負担軽減"},{"q":"社葬と合同葬の違いは？","a":"社葬：会社主体 / 合同葬：家族と企業が共同","n":"どちらも企業が主催"},{"q":"浄土宗の念仏は？","a":"南無阿弥陀仏（なむあみだぶつ）","n":"引導作法が特徴的"},{"q":"浄土真宗で使わない言葉は？","a":"冥福・成仏・供養・霊前・永眠","n":"「往生」「浄土へ」を使う"},{"q":"浄土真宗の御香典の表書きは？","a":"御仏前（四十九日前でも）","n":"他宗派は四十九日前は御霊前"},{"q":"浄土真宗の焼香の作法は？","a":"1回・押しいただかない","n":"一般仏式は3回・押しいただく"},{"q":"浄土真宗で位牌の代わりは？","a":"過去帳（または法名軸）","n":"戒名ではなく「法名」と呼ぶ"},{"q":"曹洞宗の特徴は？","a":"坐禅重視（只管打坐）・引導作法が長い","n":"道元禅師が開祖"},{"q":"真言宗の特徴は？","a":"密教・真言を唱える・108玉の数珠","n":"弘法大師（空海）が開祖"},{"q":"日蓮宗の念仏は？","a":"南無妙法蓮華経（なむみょうほうれんげきょう）","n":"「お題目」と呼ぶ"},{"q":"神式葬儀の正式名称は？","a":"神葬祭（しんそうさい）","n":"通夜→通夜祭、葬儀→葬場祭"},{"q":"神式で焼香の代わりは？","a":"玉串奉奠（たまぐしほうてん）","n":"榊の枝を神前に捧げる"},{"q":"神式の香典の表書きは？","a":"御玉串料・御榊料・御霊前","n":"「御香典」は仏式"},{"q":"カトリックの葬儀の流れは？","a":"通夜ミサ（ロザリオ）→葬儀ミサ→火葬・埋葬","n":"「死者のためのミサ」"},{"q":"プロテスタントの葬儀の流れは？","a":"前夜式→葬儀式→火葬・埋葬","n":"讃美歌・祈祷中心"},{"q":"キリスト教式の香典の表書きは？","a":"お花料・献花料","n":"御霊前・御香典は不可"},{"q":"末期の水とは？","a":"脱脂綿に水を含ませ口を湿らせる儀式","n":"臨終後、近親者が行う"},{"q":"旅支度の内容は？","a":"白装束・草履・杖・笠・六文銭（模擬）・手甲・脚絆","n":"あの世への旅の装備"},{"q":"納棺時の遺体の向きは？","a":"頭を北（北枕）または西向きが基本","n":"地域差あり"},{"q":"通夜の本来の意味は？","a":"夜通し故人を見守り翌朝まで灯りを絶やさない","n":"「夜伽（よとぎ）」"},{"q":"出棺時の棺の向きは？","a":"足を先に出す","n":"「逆さ事（さかさごと）」の一つ"},{"q":"収骨（拾骨）の作法は？","a":"二人一組で箸から箸へ。足→頭の順。のど仏は最後","n":"嫌い箸は普段はNG"},{"q":"初七日の現在の一般的な扱いは？","a":"葬儀当日に繰り上げ（繰り上げ初七日）","n":"本来は死後7日目"},{"q":"四十九日の意味は？","a":"忌明け。本位牌切替・納骨のタイミング","n":"死後49日目"},{"q":"三回忌はいつ？","a":"死後満2年目","n":"数え方で「三」になる"},{"q":"精進落としとは？","a":"火葬後の会食（参列者・僧侶をもてなす）","n":"本来は忌明け後に肉魚を食べ始めること"},{"q":"死後硬直はいつ始まる？","a":"死後2〜3時間で開始、8〜12時間で全身","n":"24〜48時間後に緩解"},{"q":"エンバーミングの目的は？","a":"防腐・消毒・修復（保存性・安全性・外観回復）","n":"国家資格ではない"},{"q":"エンバーミングが行われる主な場合は？","a":"海外搬送・長期保存・遺体修復が必要な場合","n":"IFSA認定エンバーマー"},{"q":"死亡診断書を発行できるのは？","a":"担当医師のみ","n":"事件性のある場合は「死体検案書」"},{"q":"死亡届の提出期限（国内）は？","a":"7日以内","n":"国外は3か月以内"},{"q":"死亡届の提出先は？","a":"死亡地・本籍地・届出人住所地のいずれかの市区町村","n":"役場の窓口"},{"q":"火葬許可証を発行するのは？","a":"市区町村長（死亡届受理後に交付）","n":"なければ火葬できない"},{"q":"埋葬許可証とは？","a":"火葬後に火葬場が火葬許可証へ証印を押したもの","n":"納骨時に墓地管理者へ提出"},{"q":"ドライアイスはどこに当てる？","a":"腹部・胸部（内臓の腐敗を遅らせる）","n":"1〜2日で交換"},{"q":"「生きていた頃」の正しい言い換えは？","a":"お元気だった頃","n":"直接的な表現を避ける"},{"q":"「死亡」の敬語表現は？","a":"ご逝去・お亡くなりになる","n":"「死んだ」は丁寧でない"},{"q":"電話の基本マナーは？","a":"3コール以内・名乗る・メモと復唱確認","n":"「お電話ありがとうございます」"},{"q":"弔問時の服装は？","a":"黒系スーツ・光沢なし・アクセサリー最小限","n":"白・グレーも可"},{"q":"「御霊前」と「御仏前」の使い分けは？","a":"四十九日前：御霊前 / 後：御仏前","n":"浄土真宗は常に御仏前"},{"q":"弔電の宛先は？","a":"喪主宛て（〇〇家ご遺族様も可）","n":"葬儀場・式場の住所へ"},{"q":"忌中と喪中の違いは？","a":"忌中：四十九日まで / 喪中：一周忌まで（年賀欠礼等）","n":"忌中の方が制限が多い"},{"q":"「御愁傷様です」の使い方は？","a":"遺族への直接の弔意を示す言葉","n":"口頭で使う"},{"q":"香典返し（半返し）とは？","a":"四十九日頃に香典の半額程度をお返しする慣習","n":"「満中陰志」とも"},{"q":"関東の収骨方法は？","a":"全骨収骨（すべての骨を骨壺に）","n":"骨壺サイズ：7寸（約21cm）"},{"q":"関西の収骨方法は？","a":"部分収骨（のど仏等を一部）","n":"骨壺サイズ：5寸（約15cm）"},{"q":"のど仏（骨）とは？","a":"第二頸椎（けいつい）","n":"仏様の座禅姿に見えることから大切に収骨"},{"q":"白木位牌はいつ本位牌に替える？","a":"四十九日法要の際","n":"本位牌は事前に仏具店で作成"},{"q":"遺影写真の額縁の色は？","a":"黒またはグレー","n":"光物・カラフルは不可"},{"q":"火葬炉の温度は？","a":"800〜1200℃","n":"所要時間は約60〜90分"},{"q":"副葬品として禁止されるものは？","a":"金属・ガラス・厚い本・ゴム・ペースメーカー","n":"炉を傷める・爆発の危険"},{"q":"ペースメーカーの扱いは？","a":"火葬前に必ず申告・摘出が必要","n":"爆発の危険があるため必須"},{"q":"宮型霊柩車の特徴は？","a":"金箔・豪華な装飾がある和風霊柩車","n":"現在は洋型が主流"},{"q":"繰り出し位牌とは？","a":"複数の故人の戒名札を収める位牌","n":"先祖代々の位牌として使用"},{"q":"墓地埋葬法の制定年は？","a":"昭和23年（1948年）","n":"正式名：墓地、埋葬等に関する法律"},{"q":"火葬が禁止される期間は？","a":"死後24時間（感染症指定の場合は例外）","n":"医師の確認が必要"},{"q":"感染症法の遺体特例は？","a":"指定感染症の場合、24時間以内の火葬が可能","n":"通常は24時間禁止"},{"q":"死体解剖保存法の目的は？","a":"遺体解剖・保存の条件を規定","n":"医学教育・事件捜査等"},{"q":"葬祭業の消費税の扱いは？","a":"一般的に課税対象","n":"非課税ではない点に注意"},{"q":"戒名（法名）はいつ授けられる？","a":"一般的に臨終前後〜葬儀まで","n":"お布施とは別にお礼が必要なことも"},{"q":"位牌に書く内容は？","a":"戒名・没年月日・俗名・享年","n":"浄土真宗は「法名」"},{"q":"享年と行年の違いは？","a":"享年：数え年 / 行年：満年齢","n":"どちらも使われる"},{"q":"「院号」とは？","a":"戒名の最高格の称号（〇〇院△△居士など）","n":"お布施が高額になる"},{"q":"葬祭ディレクター技能審査の創設年は？","a":"1983年（昭和58年）","n":"厚生労働省認定"},{"q":"「冥福を祈る」が使えない宗教は？","a":"浄土真宗・神式・キリスト教","n":"それぞれ死生観が異なる"},{"q":"数珠（念珠）を使わない宗教は？","a":"神式・キリスト教式","n":"仏式は必須アイテム"},{"q":"通夜振る舞いとは？","a":"通夜後に参列者をもてなす会食","n":"「お清め」とも呼ぶ"},{"q":"「お清め塩」の扱いは？","a":"近年省略する式場も増加。浄土真宗は使わない","n":"死を穢れとしない宗派"},{"q":"喪主と施主の違いは？","a":"喪主：葬儀の責任者 / 施主：費用負担者","n":"多くの場合は同一人物"},{"q":"湯灌と清拭の違いは？","a":"湯灌：入浴形式で洗い清める / 清拭：拭き清める","n":"湯灌がより丁寧"},{"q":"「北枕」の意味は？","a":"頭を北に向けて安置（お釈迦様の涅槃の姿に由来）","n":"西向きも可（西方浄土）"},{"q":"「繰り上げ初七日」が増えた理由は？","a":"遠方参列者の負担軽減・効率化","n":"葬儀当日の骨上げ後に実施"},{"q":"半返しとは？","a":"香典の半額程度をお返しすること","n":"「香典返し」とも呼ぶ"},{"q":"法事と法要の違いは？","a":"法要：読経等の宗教儀式 / 法事：法要＋会食を含む行事","n":"広義では同じ意味で使われる"},{"q":"骨壺サイズの地域差は？","a":"関東：7寸（約21cm）/ 関西：5寸（約15cm）","n":"収骨量の違いによる"},{"q":"黄白の水引を使う地域は？","a":"主に関西・北陸地方（法事・法要）","n":"黒白は全国共通"},{"q":"「院号」の最高ランクは？","a":"院殿号（〇〇院殿△△居士）","n":"最も格式が高い"},{"q":"法定相続人の順位は？","a":"①子（代襲あり）②父母 ③兄弟姉妹 ／配偶者は常に相続人","n":"民法上の規定"},{"q":"「相続放棄」の期限は？","a":"相続を知った日から3か月以内に家庭裁判所へ","n":"期限過ぎると単純承認"},{"q":"エンゼルケアを行うのは誰？","a":"病院：看護師 / 葬儀後：葬儀社スタッフ","n":"「グリーフケア」と関連"},{"q":"「グリーフワーク」とは？","a":"死別後の悲嘆を乗り越える心理的プロセス","n":"葬祭ディレクターはアフターケアも担う"},{"q":"IFSA（イフサ）とは？","a":"エンバーミングの民間資格認定機関","n":"国家資格ではない"},{"q":"葬祭業に関する特別な業法は？","a":"特定の業法はない（届出不要）","n":"墓地埋葬法・廃棄物処理法等が関連"},{"q":"葬祭ディレクター試験の年間実施回数は？","a":"年1回","n":"全国各地で実施"},{"q":"資格の更新制度は？","a":"5年ごとに更新講習が必要","n":"合格者に認定証と徽章が授与"},{"q":"「遺族」と「法定相続人」の違いは？","a":"遺族：感情的・社会的概念 / 法定相続人：民法上の権利者","n":"必ずしも一致しない"},{"q":"通夜・葬儀に参列できない場合の対処は？","a":"弔電・弔問（後日）・香典を郵送","n":"「供花」「供物」を送ることも"},{"q":"「院号」と「道号」の違いは？","a":"院号：最高格（〇〇院）/ 道号：戒名の上位部分（禅宗で多い）","n":"宗派により構成が異なる"},{"q":"火葬場への持参物は？","a":"火葬許可証・収骨容器（骨壺）・収骨袋","n":"遺影や位牌を持参することも"},{"q":"「葬儀」と「告別式」の違いは？","a":"葬儀：宗教的儀式（読経等） / 告別式：一般参列者が別れを告げる","n":"現代は両方をまとめて行うことが多い"},{"q":"白木位牌の戒名はどこに行く？","a":"四十九日後、本位牌に移して白木位牌は寺院で処分","n":"本位牌は仏具店で事前に作成"},{"q":"「散骨」の法的扱いは？","a":"明文上の禁止規定はないが、節度ある方法が必要","n":"「自然葬」の一形態"}];
+let swFlashIdx=0;
+let swFlashFlipped=false;
+function initFlash(){
+  swFlashIdx=0; swFlashFlipped=false;
+  renderFlash();
+  buildDots();
+}
+function renderFlash(){
+  const c=STUDY_FLASH_CARDS[swFlashIdx];
+  const inner=document.getElementById('sw-flash-inner');
+  if(inner){ inner.classList.remove('flipped'); swFlashFlipped=false; }
+  const q=document.getElementById('sw-flash-q');
+  const a=document.getElementById('sw-flash-a');
+  const n=document.getElementById('sw-flash-note');
+  const cnt=document.getElementById('sw-flash-counter');
+  if(q) q.textContent=c.q;
+  if(a) a.textContent=c.a;
+  if(n) n.textContent=c.n;
+  if(cnt) cnt.textContent=(swFlashIdx+1)+' / '+STUDY_FLASH_CARDS.length;
+  updateDots();
+}
+function flipCard(){
+  const inner=document.getElementById('sw-flash-inner');
+  if(inner){ inner.classList.toggle('flipped'); swFlashFlipped=!swFlashFlipped; }
+}
+function flashMove(dir){
+  swFlashIdx=(swFlashIdx+dir+STUDY_FLASH_CARDS.length)%STUDY_FLASH_CARDS.length;
+  renderFlash();
+}
+function buildDots(){
+  const wrap=document.getElementById('sw-flash-dots');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  const total=STUDY_FLASH_CARDS.length;
+  const grp=10;
+  for(let i=0;i<Math.ceil(total/grp);i++){
+    const d=document.createElement('div');
+    d.className='sw-flash-dot';
+    d.onclick=(function(gi){return function(){ swFlashIdx=gi*grp; renderFlash(); };})(i);
+    wrap.appendChild(d);
+  }
+}
+function updateDots(){
+  const dots=document.querySelectorAll('#sw-flash-dots .sw-flash-dot');
+  dots.forEach((d,i)=>d.classList.toggle('cur',i===Math.floor(swFlashIdx/10)));
+}
+document.addEventListener('DOMContentLoaded',function(){
+  initShikitenNav();
+  renderAreaTabs();
+  const nc=document.getElementById('h-night');
+  const nr=document.getElementById('h-night-row');
+  if(nc&&nr) nc.addEventListener('change',function(){nr.style.display=this.checked?'':'none';});
+  renderShikiten();
+  goPage('p-top');
+});
+
+
+// ============================================================
+// ① 式典情報ナビ
+// ============================================================
+var shikitenEdits = {};
+try { shikitenEdits = JSON.parse(localStorage.getItem('shikitenEdits') || '{}'); } catch(e) {}
+var currentSemIdx = -1;
+var _curSect = null;
+
+function initShikitenNav() {
+  var bar = document.getElementById('shikiten-sect-bar');
+  if (!bar) return;
+  var seen = {}, sects = [];
+  SHIKITEN_DATA.forEach(function(t) { if (!seen[t.sect]) { seen[t.sect] = 1; sects.push(t.sect); } });
+  bar.innerHTML = sects.map(function(s) {
+    return '<button class="tab" data-s="' + s.replace(/"/g,'&quot;') + '" onclick="shikitenSelectSect(this.dataset.s,this)">' + s + '</button>';
+  }).join('');
+  document.querySelectorAll('#tc-shikiten > .tc').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('shikiten-list-panel').style.display = 'none';
+  var firstBtn = bar.querySelector('button');
+  if (firstBtn) firstBtn.click();
+}
+
+function shikitenSelectSect(sect, btn) {
+  _curSect = sect;
+  document.querySelectorAll('#shikiten-sect-bar button').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  var temples = [];
+  SHIKITEN_DATA.forEach(function(t, i) { if (t.sect === sect) temples.push({name:t.name, area:t.area, _idx:i}); });
+  document.getElementById('shikiten-list-title').textContent = sect;
+  document.getElementById('shikiten-temple-list').innerHTML = temples.map(function(t) {
+    return '<div class="temple-list-item" data-i="' + t._idx + '" onclick="shikitenShowDetail(+this.dataset.i)">'
+      + '<span class="temple-list-name">' + t.name + '</span>'
+      + (t.area ? '<span class="temple-list-area">' + t.area + '</span>' : '')
+      + '<span class="temple-list-arrow">›</span></div>';
+  }).join('');
+  document.getElementById('shikiten-list-panel').style.display = 'block';
+  document.querySelectorAll('#tc-shikiten > .tc').forEach(function(el) { el.classList.remove('active'); });
+}
+
+function shikitenShowDetail(idx) {
+  document.getElementById('shikiten-list-panel').style.display = 'none';
+  document.querySelectorAll('#tc-shikiten > .tc').forEach(function(el) { el.classList.remove('active'); });
+  var el = document.getElementById('tc-st' + idx);
+  if (el) el.classList.add('active');
+}
+
+function shikitenBack() {
+  document.getElementById('shikiten-list-panel').style.display = 'none';
+  document.querySelectorAll('#tc-shikiten > .tc').forEach(function(el) { el.classList.remove('active'); });
+}
+
+function shikitenBackToList() {
+  document.querySelectorAll('#tc-shikiten > .tc').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('shikiten-list-panel').style.display = 'block';
+}
+
+function openShikitenEdit(idx) {
+  currentSemIdx = idx;
+  var t = SHIKITEN_DATA[idx];
+  var ed = shikitenEdits[idx] || {};
+  var ty = Object.assign({}, t.tsuya, ed.tsuya || {});
+  var sg = Object.assign({}, t.sougi, ed.sougi || {});
+  document.getElementById('sem-title').textContent = '✏️ ' + t.name;
+  var labels = {narimono:'鳴物', ippan:'一般焼香', shinzoku:'親族焼香', dokkyou:'読経', omzen:'お膳', kakimono:'書き物', shohichi:'初七日', notes:'特記'};
+  function mkRows(obj, pfx) {
+    return Object.keys(labels).map(function(k) {
+      var rows = k === 'notes' ? 3 : 1;
+      var val = (obj[k] || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return '<div class="sem-row"><span class="sem-lbl">' + labels[k] + '</span>'
+        + '<textarea class="sem-input" rows="' + rows + '" id="sem-' + pfx + '-' + k + '">' + val + '</textarea></div>';
+    }).join('');
+  }
+  document.getElementById('sem-body').innerHTML =
+    '<div class="sem-section"><h4>🌙 通夜</h4>' + mkRows(ty, 'ty') + '</div>'
+    + '<div class="sem-section"><h4>⛩ 葬儀</h4>' + mkRows(sg, 'sg') + '</div>';
+  document.getElementById('shikiten-edit-modal').style.display = 'flex';
+}
+
+function saveShikitenEdit(idx) {
+  var fields = ['narimono','ippan','shinzoku','dokkyou','omzen','kakimono','shohichi','notes'];
+  var ed = {tsuya:{}, sougi:{}};
+  fields.forEach(function(k) {
+    var ty = document.getElementById('sem-ty-' + k);
+    var sg = document.getElementById('sem-sg-' + k);
+    if (ty) ed.tsuya[k] = ty.value;
+    if (sg) ed.sougi[k] = sg.value;
+  });
+  shikitenEdits[idx] = ed;
+  try { localStorage.setItem('shikitenEdits', JSON.stringify(shikitenEdits)); } catch(e) {}
+  renderShikiten();
+  closeShikitenEdit();
+  alert('保存しました（localStorage）');
+}
+
+function resetShikitenEdit(idx) {
+  if (!confirm('この寺院の編集をリセットしますか？')) return;
+  delete shikitenEdits[idx];
+  try { localStorage.setItem('shikitenEdits', JSON.stringify(shikitenEdits)); } catch(e) {}
+  renderShikiten();
+  closeShikitenEdit();
+}
+
+function closeShikitenEdit() {
+  document.getElementById('shikiten-edit-modal').style.display = 'none';
+}
+
+function exportShikiten(idx) {
+  var t = SHIKITEN_DATA[idx];
+  var ed = shikitenEdits[idx] || {};
+  var out = Object.assign({}, t, {
+    tsuya: Object.assign({}, t.tsuya, ed.tsuya || {}),
+    sougi: Object.assign({}, t.sougi, ed.sougi || {})
+  });
+  var json = JSON.stringify(out, null, 2);
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(json).then(function() { alert('クリップボードにコピーしました'); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = json; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); alert('クリップボードにコピーしました');
+  }
+}
+
+// renderShikiten: shikitenEdits を反映するよう上書き
+function renderShikiten() {
+  SHIKITEN_DATA.forEach(function(t_orig, i) {
+    var ed = shikitenEdits[i] || {};
+    var tsuya = Object.assign({}, t_orig.tsuya, ed.tsuya || {});
+    var sougi = Object.assign({}, t_orig.sougi, ed.sougi || {});
+    var t = {name:t_orig.name, area:t_orig.area, sect:t_orig.sect, yamagou:t_orig.yamagou, tsuya:tsuya, sougi:sougi};
+    function makeGrid(d) {
+      if (!d) return '';
+      var fields = [['鳴物',d.narimono],['一般焼香',d.ippan],['親族焼香',d.shinzoku],['読経',d.dokkyou],['お膳',d.omzen],['書き物',d.kakimono],['初七日',d.shohichi]];
+      var h = '<div class="cer-grid">';
+      fields.forEach(function(f) { if (f[1]) h += '<div class="cgi"><div class="cl">' + f[0] + '</div><div class="cv">' + f[1] + '</div></div>'; });
+      h += '</div>';
+      if (d.notes) h += '<div class="note-box">' + d.notes + '</div>';
+      return h;
+    }
+    var header = '<div style="margin-bottom:8px;padding:6px 10px;background:var(--lv-bg);border-radius:var(--rs)">'
+      + '<span style="font-size:.78rem;font-weight:700;color:var(--lv)">' + t.sect + '</span>'
+      + (t.area ? ' <span style="font-size:.72rem;color:var(--tx2)">／ ' + t.area + '</span>' : '')
+      + (t.yamagou ? ' <span style="font-size:.72rem;color:var(--tx2)">（' + t.yamagou + '）</span>' : '')
+      + '</div>';
+    var tyEl = document.getElementById('cer-ty-' + i);
+    var sgEl = document.getElementById('cer-sg-' + i);
+    if (tyEl) tyEl.innerHTML = header + makeGrid(t.tsuya);
+    if (sgEl) sgEl.innerHTML = header + makeGrid(t.sougi);
+  });
+}
+
+// ============================================================
+// ② 司式者情報: エリア管理
+// ============================================================
+var jushokuAreaEdits = {customAreas:[], areaOverrides:{}, areaRenames:{}, deletedAreas:[]};
+try { var _ae = localStorage.getItem('jushokuAreaEdits'); if (_ae) jushokuAreaEdits = JSON.parse(_ae); } catch(e) {}
+
+var _BASE_AREAS = ['富士吉田','河口湖','西桂','その他','都留・大月','紹介'];
+var _areaMgrOpen = false;
+
+function saveAreaEdits() {
+  try { localStorage.setItem('jushokuAreaEdits', JSON.stringify(jushokuAreaEdits)); } catch(e) {}
+}
+
+function getEffectiveAreas() {
+  var active = _BASE_AREAS.filter(function(a) { return !jushokuAreaEdits.deletedAreas.includes(a); })
+    .map(function(a) { return jushokuAreaEdits.areaRenames[a] || a; });
+  return active.concat(jushokuAreaEdits.customAreas.map(function(ca) { return ca.name || ca; }));
+}
+
+function renderAreaTabs() {
+  var el = document.getElementById('area-tabs');
+  if (!el) return;
+  var areas = getEffectiveAreas();
+  if (currentArea === '全域' && areas.length) currentArea = areas[0];
+  el.innerHTML = areas.map(function(a) {
+    return '<button class="tab mt' + (a === currentArea ? ' active' : '') + '" data-a="' + a.replace(/"/g,'&quot;') + '" onclick="setArea(this.dataset.a,this)">' + a + '</button>';
+  }).join('') + '<button class="tab mt" style="font-size:.75rem;padding:5px 8px" onclick="setArea(\'全域\',this)">全域</button>';
+}
+
+function toggleAreaMgr() {
+  _areaMgrOpen = !_areaMgrOpen;
+  var panel = document.getElementById('area-mgr-panel');
+  var btn = document.getElementById('area-mgr-btn');
+  if (panel) panel.style.display = _areaMgrOpen ? 'block' : 'none';
+  if (btn) btn.textContent = _areaMgrOpen ? '✅ 完了' : '🗂 エリア管理';
+  if (_areaMgrOpen) renderAreaMgrList();
+}
+
+function renderAreaMgrList() {
+  var el = document.getElementById('area-mgr-list');
+  if (!el) return;
+  var all = _BASE_AREAS.concat(jushokuAreaEdits.customAreas.map(function(ca) { return ca.name || ca; }));
+  el.innerHTML = all.filter(function(a) { return !jushokuAreaEdits.deletedAreas.includes(a); }).map(function(a) {
+    var dn = jushokuAreaEdits.areaRenames[a] || a;
+    return '<div class="area-mgr-row">'
+      + '<input value="' + dn.replace(/"/g,'&quot;') + '" data-orig="' + a.replace(/"/g,'&quot;') + '" onblur="renameArea(this.dataset.orig,this.value)" style="flex:1;border:1px solid #ddd;border-radius:6px;padding:4px 8px;font-size:.83rem;font-family:inherit;background:#fff;box-sizing:border-box">'
+      + '<button class="ebtn dan sm" data-a="' + a.replace(/"/g,'&quot;') + '" onclick="deleteArea(this.dataset.a)">🗑</button>'
+      + '</div>';
+  }).join('');
+}
+
+function renameArea(orig, newName) {
+  if (!newName.trim() || newName.trim() === (jushokuAreaEdits.areaRenames[orig] || orig)) return;
+  jushokuAreaEdits.areaRenames[orig] = newName.trim();
+  saveAreaEdits();
+  renderAreaTabs();
+  if (currentArea === orig) currentArea = newName.trim();
+  renderJushoku();
+}
+
+function deleteArea(name) {
+  if (!confirm('「' + name + '」エリアを削除しますか？（寺院データは残ります）')) return;
+  if (!jushokuAreaEdits.deletedAreas.includes(name)) jushokuAreaEdits.deletedAreas.push(name);
+  saveAreaEdits();
+  renderAreaMgrList();
+  var areas = getEffectiveAreas();
+  currentArea = areas[0] || '全域';
+  renderAreaTabs();
+  renderJushoku();
+}
+
+function addCustomArea() {
+  var inp = document.getElementById('area-new-name');
+  var name = (inp.value || '').trim();
+  if (!name) return;
+  jushokuAreaEdits.customAreas.push({name:name});
+  inp.value = '';
+  saveAreaEdits();
+  renderAreaMgrList();
+  renderAreaTabs();
+}
+
+// renderJushoku: areaOverrides+areaRenames を反映するよう上書き
+function renderJushoku() {
+  var q = ((document.getElementById('j-search') || {}).value || '').toLowerCase();
+  var list = JUSHOKU_DATA.map(function(t, i) {
+    var ed = jushokuEdits[i] || {};
+    var origArea = t.area;
+    var area = jushokuAreaEdits.areaOverrides[t.name] || origArea;
+    var dispArea = jushokuAreaEdits.areaRenames[area] || area;
+    return Object.assign({}, t, ed, {_idx:i, area:dispArea});
+  });
+  if (currentArea !== '全域') list = list.filter(function(t) { return t.area === currentArea; });
+  if (q) list = list.filter(function(t) { return ['name','address','sect'].some(function(k) { return (t[k]||'').toLowerCase().includes(q); }); });
+  var el = document.getElementById('j-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<div class="notice">該当する寺院がありません</div>'; return; }
+  el.innerHTML = list.map(function(t) { return mkJCard(t); }).join('');
+}
+
+// mkJCard: エリア移動ドロップダウン追加 + フィールド名修正
+function mkJCard(t) {
+  var i = t._idx, nm = t.name || '', addr = t.address || '', tel = t.tel || '',
+      cell = t.mobile || '', fax = t.fax || '', sect = t.sect || '',
+      kaki = t.kakimono || '', note = t.notes || '', kyonen = t.kyonen || '';
+  var chips = '';
+  if (addr) chips += '<span class="chip addr">📍 ' + addr + '</span>';
+  if (tel)  chips += '<span class="chip">📞 ' + tel + '</span>';
+  if (cell) chips += '<span class="chip">📱 ' + cell + '</span>';
+  if (fax)  chips += '<span class="chip">📠 ' + fax + '</span>';
+  var detail = '';
+  if (sect)   detail += '<div class="row"><span class="lbl lv">宗派</span><span class="val">' + sect + '</span></div>';
+  if (kyonen) detail += '<div class="row"><span class="lbl">享年</span><span class="val">' + kyonen + '</span></div>';
+  if (kaki)   detail += '<div class="row"><span class="lbl">書き物</span><span class="val">' + kaki + '</span></div>';
+  if (note)   detail += '<div class="note-box">' + note + '</div>';
+  var editForm = '';
+  if (editMode) {
+    var areas = getEffectiveAreas();
+    var baseArea = jushokuAreaEdits.areaOverrides[nm] || JUSHOKU_DATA[i].area || '';
+    var curArea = jushokuAreaEdits.areaRenames[baseArea] || baseArea;
+    var areaOpts = areas.map(function(a) { return '<option value="' + a.replace(/"/g,'&quot;') + '"' + (a === curArea ? ' selected' : '') + '>' + a + '</option>'; }).join('');
+    editForm = '<div class="tdetail open">'
+      + '<div class="fg"><label>電話</label><input class="efield" value="' + tel + '" onchange="saveEdit(' + i + ',\'tel\',this.value)"></div>'
+      + '<div class="fg"><label>携帯</label><input class="efield" value="' + cell + '" onchange="saveEdit(' + i + ',\'mobile\',this.value)"></div>'
+      + '<div class="fg"><label>FAX</label><input class="efield" value="' + fax + '" onchange="saveEdit(' + i + ',\'fax\',this.value)"></div>'
+      + '<div class="fg"><label>住所</label><input class="efield" value="' + addr + '" onchange="saveEdit(' + i + ',\'address\',this.value)"></div>'
+      + '<div class="fg"><label>書き物</label><input class="efield" value="' + kaki + '" onchange="saveEdit(' + i + ',\'kakimono\',this.value)"></div>'
+      + '<div class="fg"><label>備考</label><textarea class="efield" rows="2" onchange="saveEdit(' + i + ',\'notes\',this.value)">' + note + '</textarea></div>'
+      + '<div class="fg"><label>エリア移動</label><select class="efield" data-n="' + nm.replace(/"/g,'&quot;') + '" onchange="moveToArea(this.dataset.n,this.value)">' + areaOpts + '</select></div>'
+      + '</div>';
+  }
+  return '<div class="tcard">'
+    + '<div class="tname">' + nm + '</div>'
+    + (sect ? '<div class="tsect">' + sect + '</div>' : '')
+    + '<div class="tcontacts">' + chips + '</div>'
+    + (detail ? '<button class="exp-btn" onclick="toggleDetail(\'td-' + i + '\',this)">詳細を見る ▼</button>'
+               + '<div class="tdetail" id="td-' + i + '">' + detail + '</div>' : '')
+    + editForm + '</div>';
+}
+
+function moveToArea(name, newArea) {
+  // newArea はrenamedArea。元のエリア名に逆引きして保存
+  var origArea = newArea;
+  Object.entries(jushokuAreaEdits.areaRenames).forEach(function(e) { if (e[1] === newArea) origArea = e[0]; });
+  jushokuAreaEdits.areaOverrides[name] = origArea;
+  saveAreaEdits();
+}
+
+// ============================================================
+// ③ テキストで勉強: 編集モード
+// ============================================================
+var studyEdits = {flashCards:null, accCards:{}};
+try { var _se = localStorage.getItem('studyEdits'); if (_se) studyEdits = Object.assign({flashCards:null,accCards:{}}, JSON.parse(_se)); } catch(e) {}
+
+var _studyEditMode = false;
+var _femIdx = -1;
+var _aemCard = null;
+var _flashCardsWork = null;
+
+function getFlashCards() {
+  if (!_flashCardsWork) {
+    _flashCardsWork = studyEdits.flashCards
+      ? JSON.parse(JSON.stringify(studyEdits.flashCards))
+      : JSON.parse(JSON.stringify(STUDY_FLASH_CARDS));
+  }
+  return _flashCardsWork;
+}
+
+function saveStudyEdits() {
+  studyEdits.flashCards = _flashCardsWork ? JSON.parse(JSON.stringify(_flashCardsWork)) : null;
+  try { localStorage.setItem('studyEdits', JSON.stringify(studyEdits)); } catch(e) {}
+}
+
+function toggleStudyEdit() {
+  _studyEditMode = !_studyEditMode;
+  var btn = document.getElementById('study-edit-toggle');
+  var toolbar = document.getElementById('flash-edit-toolbar');
+  if (btn) { btn.textContent = _studyEditMode ? '✅ 完了' : '✏️ 編集'; btn.classList.toggle('active', _studyEditMode); }
+  if (toolbar) toolbar.style.display = _studyEditMode ? 'flex' : 'none';
+  document.querySelectorAll('.study-ch .acc-card').forEach(function(card) {
+    card.style.position = 'relative';
+    var eb = card.querySelector('.acc-edit-btn');
+    if (!eb && _studyEditMode) {
+      eb = document.createElement('button');
+      eb.className = 'acc-edit-btn';
+      eb.textContent = '✏️';
+      (function(c) { eb.onclick = function(e) { e.stopPropagation(); openAccEdit(c); }; })(card);
+      card.appendChild(eb);
+    }
+    if (eb) eb.style.display = _studyEditMode ? 'block' : 'none';
+  });
+}
+
+function openFlashEdit(idx) {
+  var cards = getFlashCards();
+  _femIdx = idx;
+  var isNew = idx === -1;
+  var card = isNew ? {q:'',a:'',n:''} : cards[idx];
+  document.getElementById('fem-title').textContent = isNew ? '➕ カード追加' : '✏️ カード' + (idx+1) + ' 編集';
+  document.getElementById('fem-q').value = card.q || '';
+  document.getElementById('fem-a').value = card.a || '';
+  document.getElementById('fem-n').value = card.n || '';
+  var db = document.getElementById('fem-del-btn');
+  if (db) db.style.display = isNew ? 'none' : 'inline-block';
+  document.getElementById('flash-edit-modal').style.display = 'flex';
+}
+
+function saveFlashCard() {
+  var cards = getFlashCards();
+  var q = (document.getElementById('fem-q').value || '').trim();
+  var a = (document.getElementById('fem-a').value || '').trim();
+  var n = (document.getElementById('fem-n').value || '').trim();
+  if (!q || !a) { alert('問いと答えを入力してください'); return; }
+  if (_femIdx === -1) { cards.push({q:q, a:a, n:n}); }
+  else { cards[_femIdx] = {q:q, a:a, n:n}; }
+  _flashCardsWork = cards;
+  saveStudyEdits();
+  closeFlashEdit();
+  renderFlash();
+  buildDots();
+}
+
+function deleteFlashCard() {
+  if (_femIdx < 0) return;
+  var cards = getFlashCards();
+  if (!confirm('カード' + (_femIdx+1) + 'を削除しますか？')) return;
+  cards.splice(_femIdx, 1);
+  _flashCardsWork = cards;
+  saveStudyEdits();
+  closeFlashEdit();
+  swFlashIdx = Math.min(swFlashIdx, Math.max(0, cards.length - 1));
+  renderFlash();
+  buildDots();
+}
+
+function closeFlashEdit() { document.getElementById('flash-edit-modal').style.display = 'none'; }
+
+function openAccEdit(card) {
+  _aemCard = card;
+  var head = card.querySelector('.acc-title-s');
+  var body = card.querySelector('.acc-body');
+  document.getElementById('aem-ttl').value = head ? head.textContent.trim() : '';
+  document.getElementById('aem-body').value = body ? body.innerHTML.trim() : '';
+  document.getElementById('acc-edit-modal').style.display = 'flex';
+}
+
+function saveAccCard() {
+  if (!_aemCard) return;
+  var ttl = (document.getElementById('aem-ttl').value || '').trim();
+  var body = document.getElementById('aem-body').value;
+  var head = _aemCard.querySelector('.acc-title-s');
+  var bodyEl = _aemCard.querySelector('.acc-body');
+  if (head && ttl) head.textContent = ttl;
+  if (bodyEl) bodyEl.innerHTML = body;
+  closeAccEdit();
+}
+
+function closeAccEdit() { document.getElementById('acc-edit-modal').style.display = 'none'; _aemCard = null; }
+
+function exportStudyEdits() {
+  var d = {flashCards: _flashCardsWork || studyEdits.flashCards, accCards: studyEdits.accCards};
+  var json = JSON.stringify(d, null, 2);
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(json).then(function() { alert('クリップボードにコピーしました（' + getFlashCards().length + '枚）'); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = json; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); alert('クリップボードにコピーしました');
+  }
+}
+
+function importStudyEdits() {
+  var json = prompt('フラッシュカーJSONを貼り付けてください：');
+  if (!json) return;
+  try {
+    var parsed = JSON.parse(json);
+    studyEdits = parsed;
+    _flashCardsWork = parsed.flashCards ? JSON.parse(JSON.stringify(parsed.flashCards)) : null;
+    saveStudyEdits();
+    renderFlash();
+    buildDots();
+    alert('インポートしました（' + getFlashCards().length + '枚）');
+  } catch(e) { alert('JSONの形式が正しくありません'); }
+}
+
+// renderFlash 上書き
+function renderFlash() {
+  var cards = getFlashCards();
+  if (!cards.length) return;
+  if (swFlashIdx >= cards.length) swFlashIdx = 0;
+  var c = cards[swFlashIdx];
+  var inner = document.getElementById('sw-flash-inner');
+  if (inner) { inner.classList.remove('flipped'); swFlashFlipped = false; }
+  var q = document.getElementById('sw-flash-q');
+  var a = document.getElementById('sw-flash-a');
+  var n = document.getElementById('sw-flash-note');
+  var cnt = document.getElementById('sw-flash-counter');
+  if (q) q.textContent = c.q;
+  if (a) a.textContent = c.a;
+  if (n) n.textContent = c.n || '';
+  if (cnt) cnt.textContent = (swFlashIdx+1) + ' / ' + cards.length;
+  updateDots();
+}
+
+function flashMove(dir) {
+  var cards = getFlashCards();
+  swFlashIdx = (swFlashIdx + dir + cards.length) % cards.length;
+  renderFlash();
+}
+
+function buildDots() {
+  var wrap = document.getElementById('sw-flash-dots');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  var cards = getFlashCards();
+  var total = cards.length, grp = 10;
+  for (var i = 0; i < Math.ceil(total/grp); i++) {
+    var d = document.createElement('div');
+    d.className = 'sw-flash-dot';
+    (function(gi) { d.onclick = function() { swFlashIdx = gi*grp; renderFlash(); }; })(i);
+    wrap.appendChild(d);
+  }
+}
+
+function updateDots() {
+  var dots = document.querySelectorAll('#sw-flash-dots .sw-flash-dot');
+  var grp = 10;
+  dots.forEach(function(d, i) { d.classList.toggle('active', Math.floor(swFlashIdx/grp) === i); });
+}
+
+// ── アコーディオン追加/削除 対応拡張 ──
+var _aemIsNew = false;
+var _aemChEl = null;
+
+function openAccAdd(chEl) {
+  _aemIsNew = true;
+  _aemCard = null;
+  _aemChEl = chEl;
+  document.getElementById('aem-title').textContent = '➕ 項目追加';
+  document.getElementById('aem-ttl').value = '';
+  document.getElementById('aem-body').value = '';
+  var db = document.getElementById('aem-del-btn');
+  if (db) db.style.display = 'none';
+  document.getElementById('acc-edit-modal').style.display = 'flex';
+}
+
+function deleteAccCard() {
+  if (!_aemCard) return;
+  if (!confirm('この項目を削除しますか？')) return;
+  _aemCard.parentNode.removeChild(_aemCard);
+  closeAccEdit();
+}
+
+// saveAccCard 上書き：新規追加に対応
+function saveAccCard() {
+  var ttl = (document.getElementById('aem-ttl').value || '').trim();
+  var body = (document.getElementById('aem-body').value || '');
+  if (!ttl) { alert('タイトルを入力してください'); return; }
+  if (_aemIsNew) {
+    if (!_aemChEl) return;
+    var icon = '📌';
+    var newCard = document.createElement('div');
+    newCard.className = 'acc-card';
+    newCard.style.position = 'relative';
+    newCard.innerHTML = '<div class="acc-head" onclick="toggleAcc(this)">'
+      + '<div class="acc-head-left"><div class="acc-icon-s">' + icon + '</div>'
+      + '<div class="acc-title-s">' + ttl + '</div></div>'
+      + '<div class="acc-arrow">▼</div></div>'
+      + '<div class="acc-body">' + body + '</div>';
+    // 編集ボタンも追加
+    var eb = document.createElement('button');
+    eb.className = 'acc-edit-btn';
+    eb.textContent = '✏️';
+    eb.style.display = 'block';
+    (function(c) { eb.onclick = function(e) { e.stopPropagation(); openAccEdit(c); }; })(newCard);
+    newCard.appendChild(eb);
+    _aemChEl.appendChild(newCard);
+  } else {
+    if (!_aemCard) return;
+    var head = _aemCard.querySelector('.acc-title-s');
+    var bodyEl = _aemCard.querySelector('.acc-body');
+    if (head) head.textContent = ttl;
+    if (bodyEl) bodyEl.innerHTML = body;
+  }
+  closeAccEdit();
+}
+
+// openAccEdit 上書き：既存項目編集 + 削除ボタン表示
+function openAccEdit(card) {
+  _aemIsNew = false;
+  _aemChEl = null;
+  _aemCard = card;
+  var head = card.querySelector('.acc-title-s');
+  var body = card.querySelector('.acc-body');
+  document.getElementById('aem-title').textContent = '✏️ 項目編集';
+  document.getElementById('aem-ttl').value = head ? head.textContent.trim() : '';
+  document.getElementById('aem-body').value = body ? body.innerHTML.trim() : '';
+  var db = document.getElementById('aem-del-btn');
+  if (db) db.style.display = 'inline-block';
+  document.getElementById('acc-edit-modal').style.display = 'flex';
+}
+
+// toggleStudyEdit 上書き：章ごとに ➕ 追加ボタンも表示
+function toggleStudyEdit() {
+  _studyEditMode = !_studyEditMode;
+  var btn = document.getElementById('study-edit-toggle');
+  var toolbar = document.getElementById('flash-edit-toolbar');
+  if (btn) { btn.textContent = _studyEditMode ? '✅ 完了' : '✏️ 編集'; btn.classList.toggle('active', _studyEditMode); }
+  if (toolbar) toolbar.style.display = _studyEditMode ? 'flex' : 'none';
+  // 各 acc-card に ✏️ ボタン追加/非表示
+  document.querySelectorAll('.study-ch .acc-card').forEach(function(card) {
+    card.style.position = 'relative';
+    var eb = card.querySelector('.acc-edit-btn');
+    if (!eb && _studyEditMode) {
+      eb = document.createElement('button');
+      eb.className = 'acc-edit-btn';
+      eb.textContent = '✏️';
+      (function(c) { eb.onclick = function(e) { e.stopPropagation(); openAccEdit(c); }; })(card);
+      card.appendChild(eb);
+    }
+    if (eb) eb.style.display = _studyEditMode ? 'block' : 'none';
+  });
+  // 各テキスト章に ➕ 追加ボタン
+  for (var i = 0; i < 7; i++) {
+    var ch = document.getElementById('sw-ch' + i);
+    if (!ch) continue;
+    var addBtn = ch.querySelector('.acc-add-btn');
+    if (!addBtn && _studyEditMode) {
+      addBtn = document.createElement('button');
+      addBtn.className = 'acc-add-btn ebtn pri sm';
+      addBtn.style.cssText = 'display:block;margin:8px auto 0;width:100%';
+      addBtn.textContent = '➕ 項目を追加';
+      (function(chEl) { addBtn.onclick = function() { openAccAdd(chEl); }; })(ch);
+      ch.appendChild(addBtn);
+    }
+    if (addBtn) addBtn.style.display = _studyEditMode ? 'block' : 'none';
+  }
+}
+
+// ── 全データ一括出力/取込 ──
+function exportAllEdits() {
+  var data = {
+    _version: 1,
+    shikitenEdits: shikitenEdits,
+    jushokuEdits: jushokuEdits,
+    jushokuAreaEdits: jushokuAreaEdits,
+    studyEdits: {
+      flashCards: _flashCardsWork || studyEdits.flashCards,
+      accCards: studyEdits.accCards
+    }
+  };
+  var json = JSON.stringify(data, null, 2);
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(json).then(function() {
+      alert('✅ 全データをクリップボードにコピーしました\n（Claude に貼り付けて保存依頼できます）');
+    }).catch(function() { fallbackCopy(json); });
+  } else { fallbackCopy(json); }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); alert('✅ 全データをクリップボードにコピーしました'); }
+  catch(e) { alert('コピーに失敗しました。手動でコピーしてください。'); }
+  document.body.removeChild(ta);
+}
+
+function importAllEdits() {
+  var json = prompt('📥 出力したJSONを貼り付けてください：');
+  if (!json || !json.trim()) return;
+  try {
+    var data = JSON.parse(json.trim());
+    if (data.shikitenEdits) {
+      shikitenEdits = data.shikitenEdits;
+      localStorage.setItem('shikitenEdits', JSON.stringify(shikitenEdits));
+    }
+    if (data.jushokuEdits) {
+      jushokuEdits = data.jushokuEdits;
+      localStorage.setItem('jushokuEdits', JSON.stringify(jushokuEdits));
+    }
+    if (data.jushokuAreaEdits) {
+      jushokuAreaEdits = data.jushokuAreaEdits;
+      localStorage.setItem('jushokuAreaEdits', JSON.stringify(jushokuAreaEdits));
+    }
+    if (data.studyEdits) {
+      studyEdits = Object.assign({flashCards:null, accCards:{}}, data.studyEdits);
+      _flashCardsWork = null;
+      localStorage.setItem('studyEdits', JSON.stringify(studyEdits));
+    }
+    alert('✅ 全データを取り込みました。各ページを開き直すと反映されます。');
+    renderAreaTabs();
+  } catch(e) {
+    alert('❌ JSONの形式が正しくありません：' + e.message);
+  }
+}
+
+</script>
 <script>
 const ALL_QUESTIONS = [
   {
@@ -3116,7 +5003,7 @@ function saveStore(d){localStorage.setItem(STORE_KEY,JSON.stringify(d));}
 let state={mode:'basic',count:50,chapters:null,questions:[],current:0,results:[],selectedChoice:null};
 
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.quiz-page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
   if(id==='topPage')renderTop();
@@ -3290,169 +5177,4 @@ function submitAnswer(confidence){
     document.getElementById('feedTitle').style.color='#2e7d32';
   }else{
     fc.className='feedback-card feedback-wrong';
-    document.getElementById('feedIcon').textContent='😥';
-    document.getElementById('feedTitle').textContent='不正解… 正解は「'+correctAns+'」';
-    document.getElementById('feedTitle').style.color='#c62828';
-  }
-  document.getElementById('feedExp').textContent=q.explanation||'';
-  document.getElementById('feedbackArea').style.display='block';
-  document.getElementById('answerArea').style.display='none';
-  setTimeout(()=>{const el=document.getElementById('feedbackArea');if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
-}
-
-function nextQuestion(){
-  state.current++;
-  if(state.current>=state.questions.length){showResult();}
-  else{renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
-}
-function confirmQuit(){if(confirm('テストを終了しますか？ここまでの結果を保存します。')){showResult();}}
-
-/* RESULT */
-function showResult(){
-  const results=state.results;
-  const total=results.length;
-  const correctCount=results.filter(r=>r.correct).length;
-  const ambiCount=results.filter(r=>r.isAmbi).length;
-  const wrongCount=results.filter(r=>!r.correct).length;
-  const score=total?Math.round(correctCount/total*100):0;
-  document.getElementById('resultScoreNum').textContent=score;
-  document.getElementById('resultTitle').textContent=score>=90?'🏆 素晴らしい！':score>=70?'👍 よくできました！':score>=50?'📚 復習しましょう！':'💪 頑張りましょう！';
-  document.getElementById('resultSub').textContent=(state.mode==='basic'?'基本':'上級')+'問題 '+total+'問 挑戦';
-  document.getElementById('statCorrect').textContent=correctCount;
-  document.getElementById('statAmbi').textContent=ambiCount;
-  document.getElementById('statWrong').textContent=wrongCount;
-  const labels=['ア','イ','ウ','エ'];
-  const ambiResults=results.filter(r=>r.isAmbi);
-  const revSec=document.getElementById('reviewSection');
-  if(ambiResults.length){
-    revSec.style.display='block';
-    document.getElementById('reviewList').innerHTML=ambiResults.map((r,i)=>{
-      const q=r.q;
-      const correctAns=q.type==='ox'?(q.answer===0?'○':'×'):labels[q.answer];
-      const yourAns=q.type==='ox'?(r.confidence==='x'?'×':'○（あいまい）'):labels[r.selectedChoice]+'（あいまい）';
-      return '<div class="review-item"><div class="rq">'+(i+1)+'. '+q.text.slice(0,55)+(q.text.length>55?'…':'')+'</div><div class="ra">あなた:'+yourAns+' / 正解:'+correctAns+' / '+(r.correct?'✅正解':'❌不正解')+'</div><div style="font-size:.78rem;color:#555;margin-top:3px">'+(q.explanation||'')+'</div></div>';
-    }).join('');
-  }else{revSec.style.display='none';}
-  const wrongResults=results.filter(r=>!r.correct);
-  document.getElementById('wrongList').innerHTML=wrongResults.length?wrongResults.slice(0,20).map((r,i)=>{
-    const q=r.q;
-    const correctAns=q.type==='ox'?(q.answer===0?'○（正しい）':'×（誤り）'):labels[q.answer]+'. '+q.choices[q.answer];
-    return '<div class="review-item wrong-item"><div class="rq">'+(i+1)+'. '+q.text.slice(0,55)+(q.text.length>55?'…':'')+'</div><div class="ra">正解: '+correctAns+'</div><div style="font-size:.78rem;color:#555;margin-top:3px">'+(q.explanation||'')+'</div></div>';
-  }).join('')+(wrongResults.length>20?'<div style="text-align:center;color:#aaa;font-size:.83rem;margin-top:6px">他 '+(wrongResults.length-20)+'問…</div>':''):'<div style="text-align:center;color:#aaa;padding:12px;font-size:.88rem">不正解なし！完璧です🎉</div>';
-  const now=new Date();
-  const dateStr=now.getFullYear()+'/'+(String(now.getMonth()+1).padStart(2,'0'))+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  const store=loadStore();
-  if(!store.history)store.history=[];
-  store.history.push({date:dateStr,mode:state.mode,count:total,score,correct:correctCount,ambi:ambiCount,wrong:wrongCount});
-  if(store.history.length>50)store.history=store.history.slice(-50);
-  saveStore(store);
-  showPage('resultPage');
-}
-function retryQuiz(){startQuiz();}
-
-/* HISTORY */
-function renderHistory(){
-  const store=loadStore();
-  const history=(store.history||[]).slice().reverse();
-  const el=document.getElementById('historyList');
-  if(!history.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:40px;font-size:.9rem">まだ学習履歴がありません</div>';return;}
-  el.innerHTML=history.map((h,i)=>'<div class="history-item" style="margin:0 0 10px;padding:14px 16px;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:.78rem;color:#888">'+h.date+'</div><span style="font-size:.73rem;font-weight:700;padding:2px 10px;border-radius:20px;background:'+(h.mode==='basic'?'#e3f0ff':'#fff3e0')+';color:'+(h.mode==='basic'?'#1565c0':'#e65100')+'">'+(h.mode==='basic'?'基本':'上級')+' '+h.count+'問</span></div><div style="margin-top:6px"><span style="font-size:1.35rem;font-weight:900;color:#c44dff">'+h.score+'点</span><span style="font-size:.83rem;color:#888;margin-left:8px">'+h.correct+'/'+h.count+'正解</span></div><div style="font-size:.78rem;color:#888;margin-top:2px">⚠️要見直し:'+h.ambi+'問 ❌不正解:'+h.wrong+'問</div></div>').join('');
-}
-function clearHistory(){
-  if(confirm('学習履歴をすべて削除しますか？')){
-    const store=loadStore();
-    store.history=[];
-    saveStore(store);
-    renderHistory();
-  }
-}
-
-document.addEventListener('DOMContentLoaded',()=>{renderTop();updateReportCard();});
-
-/* REPORT */
-const REPORT_KEY='sosaiQuizApp_reports';
-
-function reportQuestion(){
-  const q=state.questions[state.current];
-  if(!q)return;
-  const chMap={1:'Ch1｜葬儀概論',2:'Ch2｜仏教儀礼',3:'Ch3｜神道儀礼',4:'Ch4｜キリスト教・その他',5:'Ch5｜法令',6:'Ch6｜マナー・礼儀',7:'Ch7｜接客・実務',8:'Ch8｜設備・衛生',9:'Ch9｜歴史・儀礼作法',10:'Ch10｜法令・マナー難問',11:'Ch11｜グリーフケア',12:'Ch12｜法令（基本）',13:'Ch13｜接客・実務応用',14:'Ch14｜設備・衛生応用',15:'Ch15｜法令深掘り',16:'Ch16｜仏教宗派の歴史',17:'Ch17｜葬儀の歴史'};
-  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
-  const correctAns=q.type==='ox'?(q.answer===0?'○（正しい）':'×（誤り）'):['ア','イ','ウ','エ'][q.answer];
-  const entry={
-    date:new Date().toLocaleDateString('ja-JP'),
-    chapter:chMap[q.chapter]||('Ch'+q.chapter),
-    type:q.type==='ox'?'○×問題':'4択問題',
-    text:q.text,
-    answer:correctAns,
-    explanation:q.explanation||''
-  };
-  if(!reports.find(r=>r.text===entry.text)){
-    reports.push(entry);
-    localStorage.setItem(REPORT_KEY,JSON.stringify(reports));
-  }
-  const btn=document.getElementById('reportBtn');
-  if(btn){btn.textContent='✅ 報告しました';btn.classList.add('reported');}
-  updateReportCard();
-}
-
-function updateReportCard(){
-  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
-  const card=document.getElementById('reportCardHome');
-  const cnt=document.getElementById('reportCountHome');
-  if(!card)return;
-  if(reports.length>0){
-    card.style.display='block';
-    if(cnt)cnt.textContent='現在 '+reports.length+' 件の報告があります';
-  }else{
-    card.style.display='none';
-  }
-}
-
-function showReportModal(){
-  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
-  const list=document.getElementById('reportList');
-  if(reports.length===0){
-    list.innerHTML='<p style="text-align:center;color:#aaa;padding:24px">報告された問題はありません</p>';
-  }else{
-    list.innerHTML=reports.map((r,i)=>
-      '<div style="border:1px solid #eee;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:.82rem">'+
-      '<div style="color:#999;margin-bottom:5px">'+(i+1)+'. '+r.date+' | '+r.chapter+' | '+r.type+'</div>'+
-      '<div style="margin-bottom:4px"><b>問題:</b> '+r.text+'</div>'+
-      '<div style="margin-bottom:4px"><b>現在の正解設定:</b> '+r.answer+'</div>'+
-      '<div style="color:#555"><b>解説:</b> '+r.explanation+'</div>'+
-      '</div>'
-    ).join('');
-  }
-  document.getElementById('reportModal').style.display='flex';
-}
-
-function copyReports(){
-  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
-  if(!reports.length){alert('報告された問題がありません');return;}
-  const text='【報告問題一覧】\n\n'+reports.map((r,i)=>
-    (i+1)+'. ['+r.date+'] '+r.chapter+' '+r.type+'\n'+
-    '問題: '+r.text+'\n'+
-    '現在の正解設定: '+r.answer+'\n'+
-    '解説: '+r.explanation
-  ).join('\n\n');
-  navigator.clipboard.writeText(text)
-    .then(()=>alert('コピーしました！\nClaudeのチャットに貼り付けて「この問題を修正して」と送ってください。'))
-    .catch(()=>{
-      const ta=document.createElement('textarea');
-      ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-      alert('コピーしました！');
-    });
-}
-
-function clearReports(){
-  if(confirm('報告一覧をすべて削除しますか？')){
-    localStorage.removeItem(REPORT_KEY);
-    showReportModal();
-    updateReportCard();
-  }
-}
-</script>
-
-<!-- REPORT MODAL -->
-<div id="reportModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;padding:16px">
-  <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height
+    document.getElementById('feed
