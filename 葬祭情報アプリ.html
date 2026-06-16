@@ -123,7 +123,7 @@ a.chip:active{opacity:.7}
 .study-body{flex:1;overflow-y:auto;padding:10px 10px 16px;-webkit-overflow-scrolling:touch}
 .study-ch{display:none}.study-ch.active{display:block}
 /* ボトムナビ */
-.st-bnav{display:flex;background:#fff;border-top:1px solid #e8d8f8;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
+.st-bnav{display:flex;background:#fff;border-top:1px solid #e8d8f8;flex-shrink:0;padding-bottom:calc(env(safe-area-inset-bottom,0) + 14px)}
 .st-bnav-btn{flex:1;padding:7px 2px 5px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.55rem;font-weight:700;color:#b0a0c0;transition:.2s;min-width:0}
 .st-bnav-btn .sbn-icon{font-size:1.2rem;line-height:1}
 .st-bnav-btn.active{color:var(--lv)}
@@ -330,6 +330,26 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 .area-mgr-arrows .ebtn:disabled{opacity:.3;cursor:default}
 /* ③ テキスト編集 */
 .study-edit-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:4px 10px;font-size:.78rem;cursor:pointer;font-weight:600;flex-shrink:0}
+/* 編集機能はPC幅のみ表示（スマホでは編集ボタン自体を非表示にする） */
+.cer-detail-acts,.etoolbar,.study-edit-btn,.pc-edit-only{display:none}
+@media (min-width:768px){
+  .cer-detail-acts{display:flex}
+  .etoolbar{display:flex}
+  .study-edit-btn{display:inline-block}
+  .pc-edit-only{display:flex}
+  /* データベース管理ページはPCでは横幅を広げて使いやすくする */
+  #p-db{max-width:1280px}
+}
+.db-section{background:#fff;border-radius:var(--rs);padding:14px;margin-bottom:14px;box-shadow:var(--sd)}
+.db-section h3{font-size:.95rem;margin:0 0 6px;color:var(--tx)}
+.db-hint{font-size:.78rem;color:var(--tx2);margin:0 0 10px;line-height:1.5}
+.db-table-scroll{overflow-x:auto}
+.db-table{border-collapse:collapse;width:100%;min-width:1450px;font-size:.78rem}
+.db-table th{background:var(--mt-bg);color:var(--mt);padding:6px 8px;text-align:left;white-space:nowrap;position:sticky;top:0}
+.db-table td{border-bottom:1px solid #eee;padding:4px 6px;vertical-align:top}
+.db-table td.db-cell-ro{color:var(--tx);font-weight:700;white-space:nowrap}
+.db-input{width:100%;min-width:90px;border:1px solid #ddd;border-radius:6px;padding:4px 6px;font-size:.78rem;font-family:inherit;box-sizing:border-box;background:#fff}
+.db-input[data-f="kakimono"],.db-input[data-f="nokan"],.db-input[data-f="notes"]{min-width:180px}
 .study-edit-btn.active{background:#fff;color:var(--lv)}
 .acc-edit-btn{display:none;position:absolute;top:10px;right:44px;background:var(--pk-bg);color:var(--pk);border:1px solid var(--pk);border-radius:6px;padding:2px 7px;font-size:.7rem;cursor:pointer;font-weight:600;z-index:10;line-height:1.4}
 
@@ -366,10 +386,36 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
       <div class="ttx"><h3>お勉強</h3><p>問題集・テキスト学習</p></div>
       <div class="tarr">›</div>
     </button>
+    <button class="top-btn pc-edit-only" onclick="goPage('p-db')">
+      <div class="tico" style="background:var(--gd);opacity:.18">🗄️</div>
+      <div class="ttx"><h3>データベース管理</h3><p>司式者情報・地域マスタの一括編集（PC限定）</p></div>
+      <div class="tarr">›</div>
+    </button>
   </div>
-  <div style="margin-top:14px;display:flex;gap:8px">
+  <div class="pc-edit-only" style="margin-top:14px;display:flex;gap:8px">
     <button onclick="exportAllEdits()" style="flex:1;background:var(--lv-bg);border:1.5px solid var(--lv);color:var(--lv);border-radius:12px;padding:10px 8px;font-size:.8rem;font-weight:700;cursor:pointer">📤 全データ出力</button>
     <button onclick="importAllEdits()" style="flex:1;background:var(--mt-bg);border:1.5px solid var(--mt);color:var(--mt);border-radius:12px;padding:10px 8px;font-size:.8rem;font-weight:700;cursor:pointer">📥 全データ取込</button>
+  </div>
+</div>
+<!-- データベース管理（PC限定） -->
+<div id="p-db" class="page">
+  <div class="sec-hd"><button class="back-btn" onclick="goPage('p-top')">← 戻る</button><h2>🗄️ データベース管理</h2></div>
+  <div class="db-section">
+    <h3>🗂 地域マスタ</h3>
+    <p class="db-hint">エリア名の追加・名称変更・削除・並び替え。ここでの変更は司式者情報のエリア分類に即時反映されます（マスタ参照方式）。</p>
+    <div id="db-area-list"></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="db-area-new-name" placeholder="新しいエリア名" style="flex:1;border:1px solid #ddd;border-radius:6px;padding:6px 8px;font-size:.83rem;font-family:inherit;box-sizing:border-box">
+      <button class="ebtn pri sm" onclick="addCustomAreaDb()">＋ 追加</button>
+    </div>
+  </div>
+  <div class="db-section">
+    <h3>🧎 司式者情報DB（全件・全項目編集可）</h3>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input id="db-search" oninput="renderDbTable()" placeholder="🔍 寺院名・住所・宗派で検索" style="flex:1;border:1px solid #ddd;border-radius:8px;padding:7px 10px;font-size:.83rem;font-family:inherit;box-sizing:border-box">
+      <button class="ebtn pri sm" onclick="addNewJushoku()">➕ 新規追加</button>
+    </div>
+    <div class="db-table-scroll"><table class="db-table" id="db-table"></table></div>
   </div>
 </div>
 <!-- 施行情報 -->
@@ -944,7 +990,7 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 </div>
 <div id="p-jushoku" class="page">
   <div class="sec-hd"><button class="back-btn" onclick="goPage('p-top')">← 戻る</button><h2>🧎 司式者情報</h2></div>
-  <div class="etoolbar"><button class="ebtn pri" id="edit-toggle" onclick="toggleEdit()">✏️ 編集モード</button><button class="ebtn grn" onclick="exportJSON()">📥 エクスポート</button><button class="ebtn dan" onclick="resetEdits()">🔄 リセット</button><button class="ebtn" id="area-mgr-btn" onclick="toggleAreaMgr()">🗂 エリア管理</button></div>
+  <div class="etoolbar"><button class="ebtn pri" id="edit-toggle" onclick="toggleEdit()">✏️ 編集モード</button><button class="ebtn grn" onclick="addNewJushoku()">➕ 新規追加</button><button class="ebtn grn" onclick="exportJSON()">📥 エクスポート</button><button class="ebtn dan" onclick="resetEdits()">🔄 リセット</button><button class="ebtn" id="area-mgr-btn" onclick="toggleAreaMgr()">🗂 エリア管理</button></div>
   <div class="srch-wrap"><input type="text" id="j-search" placeholder="寺院名・住所で検索..." oninput="renderJushoku()"></div>
 <div id="area-tabs" class="tabs" style="flex-wrap:wrap;overflow-x:visible;padding-bottom:0">
 <button class="tab mt active" onclick="setArea('富士吉田',this)">富士吉田</button>
@@ -1209,12 +1255,14 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo UI','Yu Gothic UI',sans-seri
 </nav>
 <script>
 const SHIKITEN_DATA=[{"name": "大正寺", "area": "新倉", "sect": "浄土真宗本願寺派", "yamagou": "寶松山", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "ご住職が立って座って一呼吸おいて仏説阿弥陀経", "dokkyou": "約25分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "親族用焼香台を出して式場内整ってから開式の辞\n通夜法話なし（御文書のみ）"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中「ごごうししゅうしょ…」", "dokkyou": "約30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "御布施はいつでもいい（式場でも後日お届けでもいい）"}}, {"name": "如来寺", "area": "新倉", "sect": "浄土真宗本願寺派", "yamagou": "大原山", "tsuya": {"narimono": "大鈴（右）", "ippan": "親族焼香の後", "shinzoku": "脇導師が一礼・正信偈に入って暫くから", "dokkyou": "約40分", "omzen": "なし", "kakimono": "法名額", "shohichi": "本導師になる人によって変わる", "notes": "通夜なし（御文書）\n通夜ピンマイクは脇導師\n軽机に水用意\nCH下吉田の場合親族夜間出入口から入ってくるので注意"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "脇導師が一礼・正信偈の途中「ごごうししゅうしょ…」", "dokkyou": "約40分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "CH下吉田の場合親族夜間出入口から入ってくるので注意"}}, {"name": "正福寺", "area": "新倉", "sect": "浄土真宗本願寺派", "yamagou": "新倉山", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "仏説阿弥陀経", "dokkyou": "約25分", "omzen": "なし", "kakimono": "法名額（式場に用）", "shohichi": "お経が始まったらすぐ", "notes": "通夜葬儀両日法話あり（お話）\n入退場時、導師の一礼に合わせてお辞儀をする\n弁当は不要（通夜告別両方）\nお布施はホールでは渡さない（寺に連絡して後）"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "初七日やらない", "notes": ""}}, {"name": "福源寺", "area": "下吉田", "sect": "浄土真宗本願寺派", "yamagou": "聖徳山", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "仏説阿弥陀経", "dokkyou": "約20〜30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ", "notes": "通夜法話あり（読み物）\n入場前に開式の辞\n法名＋俗名で紹介"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約20〜30分", "omzen": "なし", "kakimono": "法名額", "shohichi": "お経が始まったらすぐ　※司会必要", "notes": "遺影は左、遺骨は右にセット\nお布施は後日"}}, {"name": "福善寺", "area": "小沼", "sect": "浄土真宗本願寺派", "yamagou": "", "tsuya": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "合図あり（10分後くらい）", "dokkyou": "約45分 御文章あり", "omzen": "なし", "kakimono": "8号位牌　ワンプなし", "shohichi": "", "notes": "通夜の後 法話"}, "sougi": {"narimono": "大鈴", "ippan": "親族焼香の後", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約40分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "始まったらすぐ", "notes": "御布施はいつでもOK"}}, {"name": "専念寺", "area": "都留", "sect": "真宗大谷派", "yamagou": "向富山", "tsuya": {"narimono": "小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "仏説阿弥陀経・導師より合図あり", "dokkyou": "約35分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "お経が始まったらすぐ", "notes": ""}, "sougi": {"narimono": "小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "正信偈の途中から「ごごうししゅうしょ…」", "dokkyou": "約40分", "omzen": "なし", "kakimono": "8号位牌", "shohichi": "お経が始まったらすぐ", "notes": ""}}, {"name": "西方寺", "area": "小明見", "sect": "浄土宗", "yamagou": "引接山", "tsuya": {"narimono": "木魚・小鈴・大鈴（大鈴を8回打ったら）", "ippan": "1回目の木魚（仏説阿弥陀経）", "shinzoku": "2回目の木魚（仏説阿弥陀経）", "dokkyou": "約45分", "omzen": "普通にセット・箸は立てて", "kakimono": "位牌10号（ワンプ必ず外す）・七尺塔婆・無常旗・七本中長", "shohichi": "", "notes": "鳴り物は前住職は叩かない\n通夜は現住職、葬儀は前住職が本導師が多い\n※七尺塔婆は寺が用意"}, "sougi": {"narimono": "木魚・小鈴・大鈴", "ippan": "木魚", "shinzoku": "引導後、木魚", "dokkyou": "約45分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "初三日→少しお話→初七日（お焼香は開経偈のあと）", "notes": "葬儀式と告別式を分けて進行\n一人の時は傘はいらない\n弔電を入れる場所が違うときあり（月影の御詠歌あと※弔辞がある場合は特に注意）\n大傘の高さ注意（天井）\n鳴り物は前住職は叩かない\n通夜は現住職、葬儀は前住職が本導師が多い\n七尺塔婆は寺が用意"}}, {"name": "萬年寺", "area": "小明見", "sect": "浄土宗", "yamagou": "三寶山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "木魚", "dokkyou": "約35分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・六尺塔婆・無常旗（天蓋付き※使いまわしてます）", "shohichi": "お経に入ったら", "notes": "葬儀と告別式を分けて進行\n脳師が付く時は西方寺と同じ\n大傘の高さ注意（天井）\nワンプ外しておく\n小天香立てておく"}, "sougi": {"narimono": "木魚・大鈴", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約40分 法話有り", "omzen": "通夜と同じ", "kakimono": "位牌8号・六尺塔婆・無常旗（天蓋付き※使いまわしてます）", "shohichi": "", "notes": "基本的に西方寺と同じだが、若干違う"}}, {"name": "東圓寺", "area": "忍草", "sect": "天台宗", "yamagou": "忍草山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水・散水杖・印・導師用水", "ippan": "お経が始まったらすぐ", "shinzoku": "", "dokkyou": "約30分", "omzen": "逆さ膳にする", "kakimono": "位牌8号・ワンプ外す・塔婆6尺・七本中長", "shohichi": "お経が始まったらすぐ", "notes": "初七日を寺で行う場合すぐに生花ポットを寺に届ける\n初七日前にうどん食べる（ネギ抜き）※副住職一人の場合はいらないかも\n基本は12時式\nうどん食べる場合は弁当不要※当家による\n出棺経で別れの盃をする・焼香はまわさない"}, "sougi": {"narimono": "木魚・小鈴・大鈴・酒水・散水杖・別れの盃・導師用水", "ippan": "別の盃のあと 導師より合図あり※最近はない　木魚が始まったら盃　その後一般焼香", "shinzoku": "引導後導師より合図あり", "dokkyou": "約35分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "始まったらすぐ木魚", "notes": ""}}, {"name": "西念寺", "area": "上吉田", "sect": "時宗", "yamagou": "吉積山", "tsuya": {"narimono": "木魚・大鈴", "ippan": "始まったらすぐ", "shinzoku": "木魚", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てて あっても気にしない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "始まったらすぐ", "notes": ""}, "sougi": {"narimono": "木魚・大鈴", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "食事 通夜・総中払い食べるか 要確認"}}, {"name": "月江寺", "area": "下吉田", "sect": "臨済宗妙心寺派", "yamagou": "水上山", "tsuya": {"narimono": "木魚・大鈴・脳机の上に小鈴（台はなし※座布団のみでOK）", "ippan": "なるべく後", "shinzoku": "お膳を回して、振り返ったら（指名焼香終わるまでお経読まないので先に指名を呼ぶ）", "dokkyou": "約30分（法話含めると50分）", "omzen": "普通にセット", "kakimono": "位牌8号・ワンプ外す", "shohichi": "", "notes": "まず住職が来るのがだいたいギリギリ\n\nお布施は当日渡さない後日お寺に出向いて渡す\n出棺経で松明使用\n基本は中か後火葬\n机のセットの仕方が特殊\n弁当なし（役僧の分は用意）\n入場後、住職が前に進み立ち止まったら開式の辞"}, "sougi": {"narimono": "木魚・大鈴・脳机の上に小鈴・印金・香炉", "ippan": "なるべく後", "shinzoku": "引導後、お膳を回して振り返ったら", "dokkyou": "約40分（法話含めると60分）", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "焼香はすぐ　法話あり", "notes": "　導師が複数いる場合　初七日後の法話の際に脇僧を先に退席させるので注意"}}, {"name": "通玄寺", "area": "鳴沢", "sect": "臨済宗妙心寺派", "yamagou": "成濤山", "tsuya": {"narimono": "大鈴・小鈴（右側にセット）", "ippan": "すぐ", "shinzoku": "導師より合図あり・手を上げる", "dokkyou": "約30分くらい（開式が早いので早く終わるイメージですがだいたい30分くらい）", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・ワンプなし　持っていくとだいたい書いてあるのでそのまま回収", "shohichi": "", "notes": "両日持帰り弁当なし（代わりに葬儀後水を1ケース※導師人数×1ケース）\n開式を早める可能性大（ほぼ）\n自分で降りてくるので呼びに行かなくてもOK\n小天香は通夜のみ火をつけて横寝かせで置く\n抹香・小ローソクは下げて置く\n式前説明で読経の長さ言わない\n通夜は式場からそのまま帰る"}, "sougi": {"narimono": "鳴物持参・小天香不要", "ippan": "すぐ", "shinzoku": "引導後", "dokkyou": "約35分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "小天香不要・お経が始まったらすぐ（※最近は続けて初七日が多い）", "notes": "初七日後にお布施　なるべく早くあいさつに"}}, {"name": "寿徳寺", "area": "平野", "sect": "臨済宗妙心寺派", "yamagou": "海雲山", "tsuya": {"narimono": "印金持参・脳導師が付く時は太鼓・妙鉢", "ippan": "5分後くらい", "shinzoku": "20分後くらい引導後 観音経（世尊偈）から", "dokkyou": "約35分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本平塔婆", "shohichi": "小天香不要", "notes": "納骨が寺の場合合生花ポットもしくは花束必要（特に平野）\n山中の場合は納骨立会わない\n弁当なし"}, "sougi": {"narimono": "印金持参・脳導師が付く時は太鼓・妙鉢", "ippan": "5分後くらい", "shinzoku": "20分後くらい引導後 観音経（世尊偈）から", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "海蔵寺", "area": "大石", "sect": "臨済宗妙心寺派", "yamagou": "龍水山", "tsuya": {"narimono": "木魚・小鈴・大鈴（大鈴を左に）", "ippan": "小天香を立てたら", "shinzoku": "木魚", "dokkyou": "法話含めると約60分以上", "omzen": "逆さ膳・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "お経が始まったらすぐ 木魚・大鈴・小鈴", "notes": "通夜法話あり\n導師の机に飲み水用意\n食事参加することが多い\n寺菓子用意\n1時間はお通夜をする（最後に法話あり）"}, "sougi": {"narimono": "太鼓・妙鉢", "ippan": "小天香を立てたら", "shinzoku": "引導後のお経から", "dokkyou": "約35分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "承天寺", "area": "内野", "sect": "臨済宗妙心寺派", "yamagou": "医王山", "tsuya": {"narimono": "木魚・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "約10分後 頃を見計らい", "dokkyou": "約35分", "omzen": "", "kakimono": "位牌8号・5尺塔婆", "shohichi": "", "notes": "ワンプは外しておく\n弁当なし（役僧の分は用意はどちらででも）"}, "sougi": {"narimono": "印金・立って座って印金の合図", "ippan": "", "shinzoku": "引導後、木魚", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "始まったらすぐ", "notes": "導師が複数いる場合　初七日後の法話の際に脇僧を先に退席させるので注意"}}, {"name": "地蔵寺", "area": "上吉田", "sect": "臨済宗妙心寺派", "yamagou": "法輪山", "tsuya": {"narimono": "木魚・大鈴・小鈴を連打", "ippan": "お経が始まったらすぐ", "shinzoku": "観音経（世尊偈）・小鈴を連打", "dokkyou": "約40分（※30分で終わる可能性あり）", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・上仏衣", "shohichi": "お経が始まったらすぐ 木魚・大鈴・小鈴", "notes": "導師対応丁寧に\n本位牌は四十九日ではなく新盆までに作ればOK\n納棺時のり・箸・墨と上仏衣をセットで用意\n最近通夜の時間がかなり短くなってきている"}, "sougi": {"narimono": "鳴物持参", "ippan": "すぐ", "shinzoku": "引導後 観音経（世尊偈）から", "dokkyou": "約35分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "吉祥寺", "area": "上吉田", "sect": "臨済宗妙心寺派", "yamagou": "如意山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "木魚", "shinzoku": "小鈴を鳴らし立って座った御膳を回します", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長", "shohichi": "お経が始まったらすぐ", "notes": "小ローソク・時計は外しておく\n時間にかなりルーズ（※ほぼ遅刻もしくはギリギリなので開式が遅れる）"}, "sougi": {"narimono": "鳴物持参", "ippan": "お経が始まったらすぐ", "shinzoku": "引導後 観音経（世尊偈）から", "dokkyou": "約40分", "omzen": "", "kakimono": "葬儀の前に木魚・大鈴・ワンプ外す・小鈴", "shohichi": "", "notes": "小ローソク・時計は外しておく\n時間にかなりルーズ（※ほぼ遅刻もしくはギリギリなので開式が遅れる）"}}, {"name": "一乗寺", "area": "小沼", "sect": "臨済宗妙心寺派", "yamagou": "不二山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "大悲呪（開式15分経ったら）", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本平", "shohichi": "焼香はすぐ 法話あり", "notes": "ワンプは外しておく"}, "sougi": {"narimono": "木魚・小鈴・大鈴・太鼓・妙鉢", "ippan": "お経が始まったら", "shinzoku": "引導後、木魚", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "慈光院", "area": "大明見", "sect": "臨済宗妙心寺派", "yamagou": "", "tsuya": {"narimono": "小鈴・大鈴", "ippan": "お経が始まったら", "shinzoku": "約10分後 頃合いを見て", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号（葬儀の前にワンプ外す）", "shohichi": "法話あり・小天香不要", "notes": "年齢は「享年」\n一人の時は通夜葬儀とも小鈴・大鈴。初七日は木魚・大鈴"}, "sougi": {"narimono": "太鼓・妙鉢・印金", "ippan": "", "shinzoku": "引導後のお経から", "dokkyou": "約35分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "円通寺", "area": "船津", "sect": "臨済宗妙心寺派", "yamagou": "広大山", "tsuya": {"narimono": "木魚・大鈴", "ippan": "10分後くらい 木魚", "shinzoku": "大悲呪", "dokkyou": "約35分", "omzen": "ご飯と水のみ・箸は立てない", "kakimono": "位牌8号", "shohichi": "日が終わって焼香は初七から", "notes": "持帰り弁当なし\n木魚の袴を持参\nお布施時に葬儀膳を渡されるので四十九日まで使用\n小天香立てておいても良い"}, "sougi": {"narimono": "鳴物持参 木魚・大鈴", "ippan": "10分後くらい", "shinzoku": "25分後くらい 引導後（観音経）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "机にマイク用意"}}, {"name": "東光寺", "area": "長浜", "sect": "臨済宗妙心寺派", "yamagou": "タイショウ山", "tsuya": {"narimono": "木魚・小鈴・大鈴", "ippan": "お経が始まったらすぐ", "shinzoku": "いつでも良い", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七平", "shohichi": "お経が始まったらすぐ 木魚・大鈴", "notes": ""}, "sougi": {"narimono": "小鈴・印金・太鼓・妙鉢", "ippan": "", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "福昌寺", "area": "上暮地", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "大鈴・小鈴・線香", "ippan": "お経が始まったらすぐ", "shinzoku": "いつでも良い※式の流れでお任せ　(仏説涅槃略関経開経偈のみなので区切りがないため）", "dokkyou": "約40分", "omzen": "普通にセット　※住職の机には置かない　祭壇や祭壇前の真ん中　や　位牌の前に小机を用意してその上に", "kakimono": "", "shohichi": "", "notes": "通夜・葬儀・初七日全て小天香使用（火をつけ横寝かせで香炉に置く）\n祭壇・写真・お膳・香炉など全てまっすぐ並べてセット\n\n炭は横にして香炉の下側に置く\n\n※ 死亡診断書のコピーを住職に渡す。事前にコピーとることは喪主に伝えたほうがいい"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・脳机は向かい合わせ・線香", "ippan": "大悲心陀羅尼", "shinzoku": "引導後（観世音菩薩普門品偈）", "dokkyou": "約40分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "3つ目のお経から", "notes": "外した位牌の紙は骨壷の箱へ　\n初七日前に位牌の紙を取換え\n片鉢（4人）の際には　宝養寺が来る場合、食事関係は5人分になる"}}, {"name": "宝鏡寺", "area": "東桂", "sect": "曹洞宗", "yamagou": "金鷲山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "20分後", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "8号位牌・五尺塔婆・七本平", "shohichi": "", "notes": "法話有っても案内不要\n引導で喝を入れる"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机は向かい合わせ", "ippan": "", "shinzoku": "引導後 修証義", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "宝養寺", "area": "倉見", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "大悲心陀羅尼「生を明らめ死を明らむるは佛家一大事の因縁なり」", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本平", "shohichi": "", "notes": ""}, "sougi": {"narimono": "太鼓・妙鉢・印金・松明", "ippan": "", "shinzoku": "引導後の木魚", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "仏眼寺", "area": "下暮地", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "修証義", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本平", "shohichi": "", "notes": "線香は下げない"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水", "ippan": "お経が始まったら", "shinzoku": "引導後（合図あり・ウインク）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "片鉢（4人）の際には　宝養寺が来る場合、食事関係は5人分になる"}}, {"name": "広徳院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "いつでも良い", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号（10号の場合あり）・塔婆・七本平", "shohichi": "", "notes": ""}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水", "ippan": "お経が始まったら", "shinzoku": "引導後 修証義", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "泉福院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "受戒のあとの修証義", "dokkyou": "約45分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号（10号の場合あり）・塔婆・七本平", "shohichi": "", "notes": ""}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机向かい合わせ", "ippan": "お経が始まったら", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "片鉢（4人）の際には　宝養寺が来る場合、食事関係は5人分になる"}}, {"name": "深泉院", "area": "", "sect": "曹洞宗", "yamagou": "如意山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水・手磬（印金）・松明", "ippan": "お経が始まったらすぐ", "shinzoku": "修証義", "dokkyou": "約35分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本", "shohichi": "お経が始まったらすぐ 30分", "notes": "ご詠歌あり"}, "sougi": {"narimono": "手磬（印金）・松明・酒水", "ippan": "お経が始まったら", "shinzoku": "引導後（合図あり）", "dokkyou": "約50分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "楼月院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "遺教経（ゆいきょうぎょう）", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": "通夜法話あり"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机向かい合わせ", "ippan": "お経が始まったら", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "長徳院", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "", "ippan": "", "shinzoku": "", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆", "shohichi": "", "notes": "両日、式前に弁当を控室で食べる"}, "sougi": {"narimono": "", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "龍泉寺", "area": "精進", "sect": "曹洞宗", "yamagou": "石花山", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水・印金", "ippan": "お経が始まったらすぐ", "shinzoku": "開式10分後くらいでころを見計らい", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・塔婆・七本中長", "shohichi": "", "notes": "通夜法話あり\n初七日用に弁当（霊供膳）必要\n甲府のお寺と兼任\n葬儀では小天香は三本くらい用意\n三送の儀"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・妙鉢 脳机向かい合わせ・右に木魚左に大鈴", "ippan": "お経が始まったら", "shinzoku": "引導後すぐ", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "江岸寺", "area": "本栖", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・小鈴・大鈴・酒水", "ippan": "お経が始まったらすぐ", "shinzoku": "修証義 導師より合図あり", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "8号位牌・七本中長・塔婆", "shohichi": "", "notes": "通夜法話あり\n初七日用に弁当（霊供膳）必要\n別れの盃、三送の儀あり"}, "sougi": {"narimono": "太鼓・妙鉢・手磬（印金）・松明・酒水・脳机向かい合わせ", "ippan": "お経が始まったら", "shinzoku": "引導後 修証義", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "菅門寺", "area": "", "sect": "曹洞宗", "yamagou": "", "tsuya": {"narimono": "木魚・大鈴", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "位牌大木・七本中長（七尺塔婆）", "shohichi": "", "notes": "七尺塔婆は寺が用意\n通夜、小天香は火を付けて横寝かせ\n葬儀で小天香三本使用"}, "sougi": {"narimono": "印金・大鼓・ドラ", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "上行寺", "area": "上吉田", "sect": "日蓮宗", "yamagou": "身延山別院", "tsuya": {"narimono": "木魚・大鈴・印金", "ippan": "方便品にて", "shinzoku": "いつでも良い（※なんとなく寿量品とかタイミングいいとこで）", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない・和菓子があるといい（※葬儀には必ず必要）", "kakimono": "位牌8号・6尺塔婆・七本", "shohichi": "", "notes": "基本送迎が必要（最近はそうでもない）\n経机に位牌台を用意\n鐘・木鉦が逆\n御布施の金額や葬儀の後にホールで渡せるように喪主に準備させてくれと言われる\nもしかしたら、座る前後に塔婆の供養をするかも（しない時もある。。。よくわからない）\n控室の電気は基本つけない\n式前の飲物はいらない"}, "sougi": {"narimono": "木魚・大鈴・印金・鳴物持参（導師3人の場合は鋼鑼を貸し出す）", "ippan": "方便品", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "いつでもいいけど　方便品か寿量品の始まるタイミング　初七日後の法話が以外に長い", "notes": "葬儀の後にお布施のご挨拶（初七日前に脇のお坊さん帰らせてしまう為）\n後火葬の時注意　※自宅の出発の時に出棺経していない場合、花入れの後に出棺経をやるかもしれない"}}, {"name": "蓮華寺", "area": "大嵐", "sect": "日蓮宗", "yamagou": "", "tsuya": {"narimono": "木枠・大鈴・印金（右）（左）", "ippan": "開式後すぐ", "shinzoku": "開式約35分後 導師より合図あり（振り向く）", "dokkyou": "約45分", "omzen": "右側にセット・箸は立てない", "kakimono": "位牌8号・六尺塔婆・七本中長・ワンプ外さない", "shohichi": "お経が始まったらすぐ", "notes": "基本送迎が必要\n経机に位牌台を用意\n食事参加の場合多い\n脳机マイク不要"}, "sougi": {"narimono": "木枠・大鈴・鳴物持参", "ippan": "お経に入ったら", "shinzoku": "引導後のお経から", "dokkyou": "約50分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "妙法寺", "area": "小立", "sect": "法華宗", "yamagou": "", "tsuya": {"narimono": "木枠・大鈴", "ippan": "木枠の後（方便品）大鈴が二回鳴ったら", "shinzoku": "開式約15分後（※できれば寿量品などのいいタイミングで）", "dokkyou": "約45分", "omzen": "右にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・上仏衣・無常旗・ワンプ外す", "shohichi": "お経が始まったらすぐ（焼香台・イスは葬儀・七日で親族焼香が終わり そうな頃おしぼりを大鈴の導師へ）", "notes": "通夜・葬儀・初七日全ての式で小天香は必ず立てておく\n司会者は脳導師の紹介不要「妙法寺様」だけでよい\n前火葬時、火葬場で弁当渡す（最近はどちらでもいい）\n"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠の後 大鈴が二回鳴ったら", "shinzoku": "引導に入って本導師が立ち上がったら", "dokkyou": "約40分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "木枠の後（方便品）大鈴が二回鳴ったら　七日の後の法話が長い", "notes": "七日後エントランスで3回まわる"}}, {"name": "常在寺", "area": "小立", "sect": "法華宗", "yamagou": "如意山", "tsuya": {"narimono": "木枠・大鈴・印金", "ippan": "方便品", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約45分", "omzen": "葬儀は右にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・無常旗（勝山のみ）", "shohichi": "", "notes": "通夜法話あり\nワンプ外しておく\n葬儀が13：00だとお昼を食べます\n住職が本導師なら飲み水を机に\n小天香立てる"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "方便品", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "", "kakimono": "", "shohichi": "お経が始まったらすぐ（方便品）", "notes": "七日後エントランスで3回まわる"}}, {"name": "妙本寺", "area": "勝山", "sect": "法華宗", "yamagou": "法輪山", "tsuya": {"narimono": "木枠・大鈴・印金", "ippan": "方便品（木鉦）", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約40分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・無常旗", "shohichi": "", "notes": "通夜法話あり\n常在寺の本尊使用\n納棺時、湯灌を行う\n自宅出棺時、無常旗使用"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "方便品（木鉦）", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "お経が始まったらすぐ", "notes": ""}}, {"name": "霊松院", "area": "新屋", "sect": "法華宗", "yamagou": "日光山", "tsuya": {"narimono": "木枠・大鈴・鈴", "ippan": "方便品（木鉦）", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約45分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長、仏衣（上）、旗は書かない", "shohichi": "", "notes": "住職は30分前には来る"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約45分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "方便品（木鉦）", "notes": "法話なし"}}, {"name": "常照寺", "area": "松山", "sect": "法華宗", "yamagou": "福松山", "tsuya": {"narimono": "木枠・大鈴・印金", "ippan": "方便品（木鉦）", "shinzoku": "本導師が焼香をして座ったら", "dokkyou": "約30分", "omzen": "普通にセット・箸は立てない", "kakimono": "位牌8号・5尺塔婆・七本中長・無常旗", "shohichi": "", "notes": "通夜法話あり\n御本尊は両日常在寺のを使う\n役僧で常在寺来る場合控室の札は「常在寺」で用意\n少し耳が悪い"}, "sougi": {"narimono": "木枠・大鈴・印金・鳴物持参", "ippan": "木枠が合図", "shinzoku": "引導後のお経から", "dokkyou": "約40分", "omzen": "通夜と同じ", "kakimono": "", "shohichi": "方便品（木鉦）", "notes": ""}}, {"name": "真蔵院", "area": "大月", "sect": "真言宗", "yamagou": "", "tsuya": {"narimono": "大鈴・木魚", "ippan": "お経始まってすぐ", "shinzoku": "ころを見計らい", "dokkyou": "約40分", "omzen": "", "kakimono": "位牌8号", "shohichi": "読経後すぐ", "notes": "お布施のお礼は七日の後\n大月の寺院"}, "sougi": {"narimono": "", "ippan": "10分後くらいに立って座って木魚の合図", "shinzoku": "ころを見計らい", "dokkyou": "約40分", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "覚宝寺", "area": "大月", "sect": "日蓮正宗", "yamagou": "", "tsuya": {"narimono": "木魚・大蕉", "ippan": "すぐ", "shinzoku": "手を上げて合図あり（5〜10分後）", "dokkyou": "法話入れて約45分", "omzen": "無くてもよい", "kakimono": "位牌大小", "shohichi": "", "notes": "通夜法話あり\n小天香は不要、線香をそのまま置いておく\n骨や遺体を式場安置後にお経を上げる\n火葬場や会食も親族と同行\n祭壇は逗子"}, "sougi": {"narimono": "通夜と同じ", "ippan": "すぐ", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "真如苑", "area": "", "sect": "真如苑", "yamagou": "宗教法人", "tsuya": {"narimono": "大鈴・小鈴・酒水・小天香・回し香炉", "ippan": "すぐ", "shinzoku": "脳導師の焼香が終わったら（回し香炉使用）", "dokkyou": "約30分", "omzen": "使わない", "kakimono": "位牌", "shohichi": "", "notes": "黒の燭台・香炉使用\n学会のセット（扇子・榛など不要）\n小天香立てておく、導師の焼香は回し香炉\n炭は回し香炉に\n棺の窓は閉める"}, "sougi": {"narimono": "小鈴・印金・酒水・回し香炉", "ippan": "", "shinzoku": "", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "", "notes": ""}}, {"name": "善導寺・長安寺", "area": "都留", "sect": "浄土宗", "yamagou": "", "tsuya": {"narimono": "両日 大鈴・木魚のみ（小天香は立てておく）", "ippan": "すぐ", "shinzoku": "約15分後 脳導師より合図あり", "dokkyou": "約30分", "omzen": "", "kakimono": "位牌10号", "shohichi": "法話有り", "notes": "通夜は本導師が退場し、閉式のアナウンスを入れるまで脳が木魚をたたき続ける\n退席時、本導師は立ったり座ったりするので、イスひき慎重に"}, "sougi": {"narimono": "基本は導師二名", "ippan": "", "shinzoku": "引導後 脳導師より合図あり", "dokkyou": "", "omzen": "", "kakimono": "", "shohichi": "開経偈の後", "notes": ""}}];
-const JUSHOKU_DATA=[{"area": "富士吉田", "name": "吉祥寺", "yomi": "きちじょうじ", "address": "上吉田7-10-7", "tel": "0555-22-5081", "fax": "0555-22-5081", "mobile": "090-4948-4364", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "小ローソク・時計は外しておく\n時間にかなりルーズ"}, {"area": "富士吉田", "name": "月江寺", "yomi": "げっこうじ", "address": "下吉田3-26-18", "tel": "0555-23-4000", "fax": "0555-23-4445", "mobile": "080-6255-6123", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "無（火葬場も行かない）", "notes": "お布施は後日お寺に出向いて渡す\n出棺経で松明使用\n机のセットの仕方が特殊"}, {"area": "富士吉田", "name": "慈光院", "yomi": "じこういん", "address": "大明見1-3", "tel": "0555-20-1033", "fax": "0555-20-1033", "mobile": "090-3479-1157", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": "年齢は「享年」"}, {"area": "富士吉田", "name": "地蔵寺", "yomi": "じぞうじ", "address": "上吉田5-5-25", "tel": "0555-23-1197", "fax": "", "mobile": "090-2229-3390", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣・杖", "todokesaki": "寺", "nokan": "有（一緒に納棺）", "notes": "導師対応丁寧に\n本位牌は新盆までに作ればOK\n納棺時のり・箸・墨と上仏衣をセット"}, {"area": "富士吉田", "name": "正福寺", "yomi": "しょうふくじ", "address": "浅間1-5-38", "tel": "0555-22-0850", "fax": "0555-22-7395", "mobile": "090-7019-0986", "sect": "浄土真宗本願寺派", "kyonen": "満年齢＋1", "kakimono": "法名額", "todokesaki": "式場", "nokan": "前火葬有・中後火葬無", "notes": "通夜葬儀両日法話あり\n弁当は千円弁当\nお布施はホールでは渡さない"}, {"area": "富士吉田", "name": "大正寺", "yomi": "だいしょうじ", "address": "浅間1-2-1", "tel": "0555-22-1017", "fax": "0555-24-7676", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "前火葬有（中後無）", "notes": "基本は後火葬、終わってから初七日法要\n通夜法話あり"}, {"area": "富士吉田", "name": "如来寺", "yomi": "にょらいじ", "address": "浅間1-5-6", "tel": "0555-22-1823", "fax": "0555-22-7317", "mobile": "090-3146-0750", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "前有", "notes": "送迎要確認"}, {"area": "富士吉田", "name": "如来寺（晃徳）", "yomi": "にょらいじ（こうとく）", "address": "船津1541", "tel": "0555-73-8175", "fax": "", "mobile": "090-3570-3373", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "", "notes": "如来寺次男"}, {"area": "富士吉田", "name": "福源寺", "yomi": "ふくげんじ", "address": "下吉田3-41-18", "tel": "0555-23-7733", "fax": "0555-23-7903", "mobile": "090-3677-8823（副）", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "無（火葬場も行かない）", "notes": "副住職東京から来る\n葬儀は13:00以降に\n遺影は左、遺骨は右にセット"}, {"area": "富士吉田", "name": "西念寺", "yomi": "さいねんじ", "address": "上吉田7-7-1", "tel": "0555-22-0847", "fax": "0555-22-1192", "mobile": "090-3318-1658", "sect": "時宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "食事 通夜・総中払い食べるか 要確認"}, {"area": "富士吉田", "name": "西方寺", "yomi": "さいほうじ", "address": "小明見2-18-27", "tel": "0555-22-0299", "fax": "0555-22-0499", "mobile": "", "sect": "浄土宗", "kyonen": "行年表", "kakimono": "猫丸・七本（中長）・無常旗（位牌→喪家）", "todokesaki": "寺", "nokan": "有", "notes": "お膳は用意しない\n納棺時カミソリ・半紙・のりを用意\n寺へ大傘を借りる"}, {"area": "富士吉田", "name": "善導寺", "yomi": "ぜんどうじ", "address": "上吉田2-11-14", "tel": "0555-22-4126", "fax": "", "mobile": "", "sect": "浄土宗", "kyonen": "満年齢＋1", "kakimono": "", "todokesaki": "要確認", "nokan": "要確認", "notes": ""}, {"area": "富士吉田", "name": "万年寺", "yomi": "まんねんじ", "address": "小明見12-6071", "tel": "0555-22-3370", "fax": "", "mobile": "", "sect": "浄土宗", "kyonen": "行年表", "kakimono": "猫丸・七本（中長）・無常旗（位牌→喪家）", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認\n納棺時カミソリ・半紙・のりを用意\n寺へ大傘を借りる"}, {"area": "富士吉田", "name": "上行寺", "yomi": "じょうぎょうじ", "address": "上吉田38", "tel": "0555-22-1078", "fax": "0555-25-7008", "mobile": "080-2089-8314", "sect": "日蓮宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認"}, {"area": "富士吉田", "name": "常照寺", "yomi": "じょうしょうじ", "address": "松山2-10-12", "tel": "0555-24-3940", "fax": "", "mobile": "090-1882-8575", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる"}, {"area": "富士吉田", "name": "福昌寺", "yomi": "ふくしょうじ", "address": "上暮地3-1-1", "tel": "0555-22-3084", "fax": "0555-22-3041", "mobile": "090-4622-6866", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "富士吉田", "name": "霊松院", "yomi": "れいしょういん", "address": "新屋242", "tel": "0555-24-2068", "fax": "0555-25-7117", "mobile": "090-8684-7903", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・無常旗・仏衣", "todokesaki": "寺", "nokan": "有", "notes": ""}, {"area": "河口湖", "name": "円通寺", "yomi": "えんつうじ", "address": "船津3932", "tel": "0555-72-0279", "fax": "0555-72-4499", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": "円通寺のみの時、寺弁当は用意しない\n持帰り弁当なし"}, {"area": "河口湖", "name": "海蔵寺", "yomi": "かいぞうじ", "address": "大石1220", "tel": "0555-76-7721", "fax": "0555-76-7783", "mobile": "090-8857-1909", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "式名札と脳師へ\n通夜法話あり\n食事参加することが多い\n寺菓子用意"}, {"area": "河口湖", "name": "河口善応寺", "yomi": "ぜんおうじ", "address": "河口160", "tel": "0555-76-6843", "fax": "", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "河口湖", "name": "東光寺", "yomi": "とうこうじ", "address": "長浜625", "tel": "0555-82-2136", "fax": "", "mobile": "090-8854-0439", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "要確認", "notes": ""}, {"area": "河口湖", "name": "常在寺", "yomi": "じょうざいじ", "address": "小立139", "tel": "0555-72-1559", "fax": "0555-72-8986", "mobile": "090-4923-1754", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる\n七日後エントランスで3回まわる\n小天香立てる"}, {"area": "河口湖", "name": "妙法寺", "yomi": "みょうほうじ", "address": "小立692", "tel": "0555-72-1542", "fax": "0555-72-1751", "mobile": "080-5501-4800 / 090-1083-6355（代理）", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣・無常旗", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる\n枕経の時間伝える\n通夜・葬儀・初七日全て小天香必ず立てる\n七日後エントランスで3回まわる"}, {"area": "河口湖", "name": "妙本寺", "yomi": "みょうほんじ", "address": "勝山609", "tel": "0555-83-2207", "fax": "", "mobile": "", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・無常旗", "todokesaki": "寺", "nokan": "有（一緒に納棺）", "notes": "自宅出棺時、無常旗使用\n告別式前にうどんを食べる"}, {"area": "河口湖", "name": "蓮華寺", "yomi": "れんげじ", "address": "大嵐6", "tel": "0555-82-2139", "fax": "", "mobile": "090-3069-0897", "sect": "日蓮宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認\n食事 通夜・告別式前・昼中払い 要確認\n脳机マイク不要"}, {"area": "河口湖", "name": "龍泉寺", "yomi": "りゅうせんじ", "address": "精進", "tel": "055-284-2015", "fax": "", "mobile": "090-3246-3919（野沢）", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "要確認", "nokan": "有", "notes": "（南アルプス市 梅本様）"}, {"area": "河口湖", "name": "江岸寺", "yomi": "こうがんじ", "address": "本栖318", "tel": "0555-87-2422", "fax": "0555-87-2422", "mobile": "", "sect": "曹洞宗", "kyonen": "満年齢＋1", "kakimono": "猫丸・5尺・七本（平）・仏衣・杖", "todokesaki": "寺", "nokan": "有", "notes": "富士ケ嶽は納棺後、旅支度 本栖は読経中に旅支度\n初七日法要お膳を変える（昼中払いの膳料で可）"}, {"area": "西桂", "name": "一乗院", "yomi": "いちじょういん", "address": "小沼232", "tel": "0555-25-2726", "fax": "", "mobile": "", "sect": "真如苑", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "西桂", "name": "長得院", "yomi": "ちょうとくいん", "address": "小沼1469-5", "tel": "0555-25-3326", "fax": "", "mobile": "090-4058-3965", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "西桂", "name": "仏眼寺", "yomi": "ぶつげんじ", "address": "下暮地1162", "tel": "0555-25-2437", "fax": "", "mobile": "090-2227-4127", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": "自宅に住職が枕経・出棺経に来るときは足が悪いのでイスを用意"}, {"area": "西桂", "name": "宝養寺", "yomi": "ほうようじ", "address": "倉見954", "tel": "0555-25-2317", "fax": "", "mobile": "090-2206-3705", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "西桂", "name": "一乗寺", "yomi": "いちじょうじ", "address": "小沼1997", "tel": "0555-25-2031", "fax": "0555-73-8022", "mobile": "090-4847-9029", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "要確認", "nokan": "要確認", "notes": ""}, {"area": "西桂", "name": "福善寺", "yomi": "ふくぜんじ", "address": "小沼1990", "tel": "0555-25-3366", "fax": "0555-72-8025", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": ""}, {"area": "西桂", "name": "宝鏡寺", "yomi": "ほうきょうじ", "address": "東桂", "tel": "0554-43-4459", "fax": "0554-43-8681", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "", "notes": "寳鏡寺"}, {"area": "その他", "name": "承天寺", "yomi": "じょうてんじ", "address": "内野192", "tel": "0555-84-2356", "fax": "0555-84-3988", "mobile": "090-6991-0520", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "要確認", "nokan": "要確認", "notes": "（住職不在の為）"}, {"area": "その他", "name": "東圓寺", "yomi": "とうえんじ", "address": "忍草38", "tel": "0555-84-4114", "fax": "0555-84-4104", "mobile": "090-4735-1808", "sect": "天台宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "入電は副住職\n初七日を寺で行う場合は本堂に花・菓子・果物を用意する"}, {"area": "その他", "name": "慧光寺", "yomi": "えこうじ", "address": "忍草3250", "tel": "0555-84-8082", "fax": "0555-84-8122", "mobile": "", "sect": "浄土真宗木辺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "寿徳寺", "yomi": "じゅとくじ", "address": "平野147", "tel": "0555-65-8209", "fax": "0555-20-3050", "mobile": "090-8779-5908", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "有", "notes": "納骨が寺の場合合生花ポット\n山中の場合は納骨立会わない"}, {"area": "その他", "name": "通玄寺", "yomi": "つうげんじ", "address": "鳴沢村251", "tel": "0555-85-2017", "fax": "", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "満年齢", "kakimono": "猫丸（ワンプなし）", "todokesaki": "寺", "nokan": "無", "notes": ""}, {"area": "その他", "name": "真澄寺別院", "yomi": "", "address": "大石2585", "tel": "0555-76-8201", "fax": "", "mobile": "", "sect": "真如苑", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "瑞蓮寺", "yomi": "", "address": "一宮町田中408", "tel": "0553-47-0572", "fax": "0553-47-4478", "mobile": "", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "円福寺", "yomi": "えんぷくじ", "address": "道志村久保2355", "tel": "0554-52-2840", "fax": "0463-88-4736", "mobile": "090-4847-7168", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "永寿院", "yomi": "えいじゅいん", "address": "十日市場603", "tel": "0554-43-3919", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "耕雲院", "yomi": "こううんいん", "address": "夏狩1884", "tel": "0554-43-2593", "fax": "0554-45-4618", "mobile": "090-1543-2379", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "広教寺", "yomi": "こうきょうじ", "address": "大幡1541", "tel": "0554-43-3329", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "広徳院", "yomi": "こうとくいん", "address": "境636", "tel": "0554-45-2523", "fax": "0554-45-2586", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "光照寺", "yomi": "こうしょうじ", "address": "鹿留1976", "tel": "0554-43-4288", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長泉院", "yomi": "ちょうせんいん", "address": "鹿留606", "tel": "0554-43-2883", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "要寺送迎"}, {"area": "都留・大月", "name": "普門寺", "yomi": "ふもんじ", "address": "御太刀1-21-22", "tel": "0554-43-3400", "fax": "0554-43-7880", "mobile": "090-4606-7783", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長生寺", "yomi": "ちょうしょうじ", "address": "下谷2954", "tel": "0554-43-2690", "fax": "0554-43-3587", "mobile": "090-9668-5378", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "宝鏡寺（都留）", "yomi": "ほうきょうじ", "address": "桂1047", "tel": "0554-43-4459", "fax": "0554-43-8681", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "寳鏡寺"}, {"area": "都留・大月", "name": "西光寺", "yomi": "さいこうじ", "address": "川茂114", "tel": "0554-43-3004", "fax": "", "mobile": "090-3094-4424", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "浄泉寺", "yomi": "じょうせんじ", "address": "川茂195", "tel": "0554-43-3321", "fax": "0554-43-8821", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "枕経を先に行う 時間伝える"}, {"area": "都留・大月", "name": "桂林寺", "yomi": "けいりんじ", "address": "金井397", "tel": "0554-43-3270", "fax": "FAXも同じ", "mobile": "090-3477-5411", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "清泉寺", "yomi": "せいせんじ", "address": "四日市場1129", "tel": "0554-43-3920", "fax": "0554-43-7886", "mobile": "090-3209-2721", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長慶寺", "yomi": "ちょうけいじ", "address": "夏狩240", "tel": "0554-43-3663", "fax": "", "mobile": "080-9977-7588", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "専念寺", "yomi": "せんねんじ", "address": "中央4-3-6", "tel": "0554-43-2904", "fax": "0554-43-2994", "mobile": "090-7264-7711", "sect": "真宗大谷派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長安寺", "yomi": "ちょうあんじ", "address": "上谷3-6-30", "tel": "0554-43-0850", "fax": "0554-43-0845", "mobile": "", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "善導寺兼務"}, {"area": "都留・大月", "name": "東漸寺", "yomi": "とうぜんじ", "address": "都留市中央4-3-1", "tel": "0554-43-3679", "fax": "", "mobile": "", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "無辺寺", "yomi": "むへんじ", "address": "大月2-9-20", "tel": "0554-23-1745", "fax": "", "mobile": "090-3346-5524", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "阿弥陀寺兼務"}, {"area": "紹介", "name": "慈照寺", "yomi": "じしょうじ", "address": "南巨摩郡身延町伊沼25", "tel": "0556-42-2439", "fax": "", "mobile": "090-7724-2266", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "よりそうお坊さん"}, {"area": "紹介", "name": "法善寺", "yomi": "ほうぜんじ", "address": "南アルプス市落合2099", "tel": "", "fax": "", "mobile": "090-2101-7676", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "小さなお葬式"}, {"area": "紹介", "name": "慈光院（甲府）", "yomi": "じこういん", "address": "甲府市徳行4-8-1", "tel": "055-237-7288", "fax": "", "mobile": "090-8209-8866", "sect": "臨済宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "小さなお葬式"}, {"area": "紹介", "name": "福應寺", "yomi": "ふくおうじ", "address": "甲州市塩山竹森798", "tel": "0553-33-3273", "fax": "0553-32-1338", "mobile": "090-1804-1856", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "よりそうお坊さん"}];
+const JUSHOKU_DATA=[{"area": "富士吉田", "name": "吉祥寺", "yomi": "きちじょうじ", "address": "上吉田7-10-7", "tel": "0555-22-5081", "fax": "0555-22-5081", "mobile": "090-4948-4364", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "小ローソク・時計は外しておく\n時間にかなりルーズ"}, {"area": "富士吉田", "name": "月江寺", "yomi": "げっこうじ", "address": "下吉田3-26-18", "tel": "0555-23-4000", "fax": "0555-23-4445", "mobile": "080-6255-6123", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸（届はいらない）FAXのみ　通夜の日にホールで貼り付ける", "todokesaki": "寺", "nokan": "無（火葬場も行かない）", "notes": "お布施は後日お寺に出向いて渡す\n出棺経で松明使用\n机のセットの仕方が特殊"}, {"area": "富士吉田", "name": "慈光院", "yomi": "じこういん", "address": "大明見1-3", "tel": "0555-20-1033", "fax": "0555-20-1033", "mobile": "090-3479-1157", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": "年齢は「享年」"}, {"area": "富士吉田", "name": "地蔵寺", "yomi": "じぞうじ", "address": "上吉田5-5-25", "tel": "0555-23-1197", "fax": "", "mobile": "090-2229-3390", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣（上）・杖", "todokesaki": "寺", "nokan": "有（一緒に納棺）", "notes": "導師対応丁寧に\n本位牌は新盆までに作ればOK\n納棺時のり・箸・墨と上仏衣をセット\n立ち合い納棺（書きながら）"}, {"area": "富士吉田", "name": "正福寺", "yomi": "しょうふくじ", "address": "浅間1-5-38", "tel": "0555-22-0850", "fax": "0555-22-7395", "mobile": "090-7019-0986", "sect": "浄土真宗本願寺派", "kyonen": "満年齢＋1", "kakimono": "法名額（FAXで日程のみ）", "todokesaki": "式場", "nokan": "前火葬有・中後火葬無", "notes": "通夜葬儀両日法話あり\n弁当は千円弁当\nお布施はホールでは渡さない"}, {"area": "富士吉田", "name": "大正寺", "yomi": "だいしょうじ", "address": "浅間1-2-1", "tel": "0555-22-1017", "fax": "0555-24-7676", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "前火葬有（中後無）", "notes": "基本は後火葬、終わってから初七日法要\n通夜法話あり"}, {"area": "富士吉田", "name": "如来寺", "yomi": "にょらいじ", "address": "浅間1-5-6", "tel": "0555-22-1823", "fax": "0555-22-7317", "mobile": "090-3146-0750", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "前有", "notes": "送迎要確認"}, {"area": "富士吉田", "name": "如来寺（晃徳）", "yomi": "にょらいじ（こうとく）", "address": "船津1541", "tel": "0555-73-8175", "fax": "", "mobile": "090-3570-3373", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "", "notes": "如来寺次男"}, {"area": "富士吉田", "name": "福源寺", "yomi": "ふくげんじ", "address": "下吉田3-41-18", "tel": "0555-23-7733", "fax": "0555-23-7903", "mobile": "090-3677-8823（副）", "sect": "浄土真宗本願寺派", "kyonen": "行年表", "kakimono": "法名額", "todokesaki": "寺", "nokan": "無（火葬場も行かない）", "notes": "副住職東京から来る\n葬儀は13:00以降に\n遺影は左、遺骨は右にセット"}, {"area": "富士吉田", "name": "西念寺", "yomi": "さいねんじ", "address": "上吉田7-7-1", "tel": "0555-22-0847", "fax": "0555-22-1192", "mobile": "090-3318-1658", "sect": "時宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "食事 通夜・総中払い食べるか 要確認（コロナ後ほぼ弁当）"}, {"area": "富士吉田", "name": "西方寺", "yomi": "さいほうじ", "address": "小明見2-18-27", "tel": "0555-22-0299", "fax": "0555-22-0499", "mobile": "", "sect": "浄土宗", "kyonen": "行年表", "kakimono": "猫丸・七本（中長）・無常旗（位牌→喪家）", "todokesaki": "寺", "nokan": "有", "notes": "お膳は用意しない\n納棺時カミソリ・半紙・のりを用意\n寺へ大傘を借りる"}, {"area": "富士吉田", "name": "善導寺", "yomi": "ぜんどうじ", "address": "上吉田2-11-14", "tel": "0555-22-4126", "fax": "", "mobile": "", "sect": "浄土宗", "kyonen": "満年齢＋1", "kakimono": "10号または8号", "todokesaki": "要確認", "nokan": "要確認", "notes": "都留の長安寺に届ける"}, {"area": "富士吉田", "name": "万年寺", "yomi": "まんねんじ", "address": "小明見12-6071", "tel": "0555-22-3370", "fax": "", "mobile": "", "sect": "浄土宗", "kyonen": "行年表", "kakimono": "猫丸・七本（中長）・無常旗（位牌→喪家）", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認\n納棺時カミソリ・半紙・のりを用意\n寺へ大傘を借りる"}, {"area": "富士吉田", "name": "上行寺", "yomi": "じょうぎょうじ", "address": "上吉田38", "tel": "0555-22-1078", "fax": "0555-25-7008", "mobile": "080-2089-8314", "sect": "日蓮宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認　早めに届ける（回収も必要）"}, {"area": "富士吉田", "name": "常照寺", "yomi": "じょうしょうじ", "address": "松山2-10-12", "tel": "0555-24-3940", "fax": "", "mobile": "090-1882-8575", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる"}, {"area": "富士吉田", "name": "福昌寺", "yomi": "ふくしょうじ", "address": "上暮地3-1-1", "tel": "0555-22-3084", "fax": "0555-22-3041", "mobile": "090-4622-6866", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）　届けるのは　五尺と七本のみ（通夜時に紙で貼る）", "todokesaki": "寺", "nokan": "", "notes": "住職が寺にいるときに届ける"}, {"area": "富士吉田", "name": "霊松院", "yomi": "れいしょういん", "address": "新屋242", "tel": "0555-24-2068", "fax": "0555-25-7117", "mobile": "090-8684-7903", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・無常旗・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "早く書き物ほしいといわれる\n出来上がりも結構早い\n納棺、通夜、葬儀それぞれ住職が来るのが早い"}, {"area": "河口湖", "name": "円通寺", "yomi": "えんつうじ", "address": "船津3932", "tel": "0555-72-0279", "fax": "0555-72-4499", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": "円通寺のみの時、寺弁当は用意しない\n持帰り弁当なし"}, {"area": "河口湖", "name": "海蔵寺", "yomi": "かいぞうじ", "address": "大石1220", "tel": "0555-76-7721", "fax": "0555-76-7783", "mobile": "090-8857-1909", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "要確認", "notes": "式名札と脳師へ\n通夜法話あり\n食事参加することが多い\n寺菓子用意"}, {"area": "河口湖", "name": "河口善応寺", "yomi": "ぜんおうじ", "address": "河口160", "tel": "0555-76-6843", "fax": "", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "河口湖", "name": "東光寺", "yomi": "とうこうじ", "address": "長浜625", "tel": "0555-82-2136", "fax": "", "mobile": "090-8854-0439", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "要確認", "notes": ""}, {"area": "河口湖", "name": "常在寺", "yomi": "じょうざいじ", "address": "小立139", "tel": "0555-72-1559", "fax": "0555-72-8986", "mobile": "090-4923-1754", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる\n七日後エントランスで3回まわる\n小天香立てる"}, {"area": "河口湖", "name": "妙法寺", "yomi": "みょうほうじ", "address": "小立692", "tel": "0555-72-1542", "fax": "0555-72-1751", "mobile": "080-5501-4800 / 090-1083-6355（代理）", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・仏衣・無常旗", "todokesaki": "寺", "nokan": "有", "notes": "告別式前にうどんを食べる\n枕経の時間伝える\n通夜・葬儀・初七日全て小天香必ず立てる\n七日後エントランスで3回まわる"}, {"area": "河口湖", "name": "妙本寺", "yomi": "みょうほんじ", "address": "勝山609", "tel": "0555-83-2207", "fax": "", "mobile": "", "sect": "法華宗", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）・無常旗", "todokesaki": "寺", "nokan": "有（一緒に納棺）", "notes": "自宅出棺時、無常旗使用\n告別式前にうどんを食べる"}, {"area": "河口湖", "name": "蓮華寺", "yomi": "れんげじ", "address": "大嵐6", "tel": "0555-82-2139", "fax": "", "mobile": "090-3069-0897", "sect": "日蓮宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）・仏衣", "todokesaki": "寺", "nokan": "有", "notes": "送迎要確認\n食事 通夜・告別式前・昼中払い 要確認\n脳机マイク不要"}, {"area": "河口湖", "name": "龍泉寺", "yomi": "りゅうせんじ", "address": "精進", "tel": "055-284-2015", "fax": "", "mobile": "090-3246-3919（野沢）", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "要確認", "nokan": "有", "notes": "（南アルプス市 梅本様）"}, {"area": "河口湖", "name": "江岸寺", "yomi": "こうがんじ", "address": "本栖318", "tel": "0555-87-2422", "fax": "0555-87-2422", "mobile": "", "sect": "曹洞宗", "kyonen": "満年齢＋1", "kakimono": "猫丸・5尺・七本（平）・仏衣・杖", "todokesaki": "寺", "nokan": "有", "notes": "富士ケ嶽は納棺後、旅支度 本栖は読経中に旅支度\n初七日法要お膳を変える（昼中払いの膳料で可）"}, {"area": "西桂", "name": "一乗院", "yomi": "いちじょういん", "address": "小沼232", "tel": "0555-25-2726", "fax": "", "mobile": "", "sect": "真如苑", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "西桂", "name": "長得院", "yomi": "ちょうとくいん", "address": "小沼1469-5", "tel": "0555-25-3326", "fax": "", "mobile": "090-4058-3965", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "西桂", "name": "仏眼寺", "yomi": "ぶつげんじ", "address": "下暮地1162", "tel": "0555-25-2437", "fax": "", "mobile": "090-2227-4127", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": "自宅に住職が枕経・出棺経に来るときは足が悪いのでイスを用意"}, {"area": "西桂", "name": "宝養寺", "yomi": "ほうようじ", "address": "倉見954", "tel": "0555-25-2317", "fax": "", "mobile": "090-2206-3705", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（平）", "todokesaki": "寺", "nokan": "", "notes": ""}, {"area": "西桂", "name": "一乗寺", "yomi": "いちじょうじ", "address": "小沼1997", "tel": "0555-25-2031", "fax": "0555-73-8022", "mobile": "090-4847-9029", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "要確認", "nokan": "要確認", "notes": ""}, {"area": "西桂", "name": "福善寺", "yomi": "ふくぜんじ", "address": "小沼1990", "tel": "0555-25-3366", "fax": "0555-72-8025", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "猫丸", "todokesaki": "寺", "nokan": "要確認", "notes": ""}, {"area": "西桂", "name": "宝鏡寺", "yomi": "ほうきょうじ", "address": "東桂", "tel": "0554-43-4459", "fax": "0554-43-8681", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "猫丸・5尺・七本（中長）", "todokesaki": "寺", "nokan": "", "notes": "寳鏡寺"}, {"area": "その他", "name": "承天寺", "yomi": "じょうてんじ", "address": "内野192", "tel": "0555-84-2356", "fax": "0555-84-3988", "mobile": "090-6991-0520", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺", "todokesaki": "要確認", "nokan": "要確認", "notes": "通夜まで毎日お経上げに来る\n"}, {"area": "その他", "name": "東圓寺", "yomi": "とうえんじ", "address": "忍草38", "tel": "0555-84-4114", "fax": "0555-84-4104", "mobile": "090-4735-1808", "sect": "天台宗", "kyonen": "行年表", "kakimono": "猫丸・6尺・七本（中長）", "todokesaki": "寺", "nokan": "有", "notes": "入電は副住職\n初七日を寺で行う場合は本堂に花・菓子・果物を用意する\n納骨がない場合は　ホールでお布施を渡す"}, {"area": "その他", "name": "慧光寺", "yomi": "えこうじ", "address": "忍草3250", "tel": "0555-84-8082", "fax": "0555-84-8122", "mobile": "", "sect": "浄土真宗木辺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "寿徳寺", "yomi": "じゅとくじ", "address": "平野147", "tel": "0555-65-8209", "fax": "0555-20-3050", "mobile": "090-8779-5908", "sect": "臨済宗妙心寺派", "kyonen": "行年表", "kakimono": "猫丸・5尺・七本（平）※お墓が承天寺の檀家さんは七本塔婆いらない", "todokesaki": "寺", "nokan": "有", "notes": "納骨が寺の場合合生花ポット\n山中の場合は納骨立会わない"}, {"area": "その他", "name": "通玄寺", "yomi": "つうげんじ", "address": "鳴沢村251", "tel": "0555-85-2017", "fax": "", "mobile": "", "sect": "臨済宗妙心寺派", "kyonen": "満年齢", "kakimono": "猫丸（ワンプなし）", "todokesaki": "寺", "nokan": "無", "notes": ""}, {"area": "その他", "name": "真澄寺別院", "yomi": "", "address": "大石2585", "tel": "0555-76-8201", "fax": "", "mobile": "", "sect": "真如苑", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "瑞蓮寺", "yomi": "", "address": "一宮町田中408", "tel": "0553-47-0572", "fax": "0553-47-4478", "mobile": "", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "その他", "name": "円福寺", "yomi": "えんぷくじ", "address": "道志村久保2355", "tel": "0554-52-2840", "fax": "0463-88-4736", "mobile": "090-4847-7168", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "永寿院", "yomi": "えいじゅいん", "address": "十日市場603", "tel": "0554-43-3919", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "耕雲院", "yomi": "こううんいん", "address": "夏狩1884", "tel": "0554-43-2593", "fax": "0554-45-4618", "mobile": "090-1543-2379", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "広教寺", "yomi": "こうきょうじ", "address": "大幡1541", "tel": "0554-43-3329", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "広徳院", "yomi": "こうとくいん", "address": "境636", "tel": "0554-45-2523", "fax": "0554-45-2586", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "光照寺", "yomi": "こうしょうじ", "address": "鹿留1976", "tel": "0554-43-4288", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長泉院", "yomi": "ちょうせんいん", "address": "鹿留606", "tel": "0554-43-2883", "fax": "", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "要寺送迎"}, {"area": "都留・大月", "name": "普門寺", "yomi": "ふもんじ", "address": "御太刀1-21-22", "tel": "0554-43-3400", "fax": "0554-43-7880", "mobile": "090-4606-7783", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長生寺", "yomi": "ちょうしょうじ", "address": "下谷2954", "tel": "0554-43-2690", "fax": "0554-43-3587", "mobile": "090-9668-5378", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "宝鏡寺（都留）", "yomi": "ほうきょうじ", "address": "桂1047", "tel": "0554-43-4459", "fax": "0554-43-8681", "mobile": "", "sect": "曹洞宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "寳鏡寺"}, {"area": "都留・大月", "name": "西光寺", "yomi": "さいこうじ", "address": "川茂114", "tel": "0554-43-3004", "fax": "", "mobile": "090-3094-4424", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "浄泉寺", "yomi": "じょうせんじ", "address": "川茂195", "tel": "0554-43-3321", "fax": "0554-43-8821", "mobile": "", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "枕経を先に行う 時間伝える"}, {"area": "都留・大月", "name": "桂林寺", "yomi": "けいりんじ", "address": "金井397", "tel": "0554-43-3270", "fax": "FAXも同じ", "mobile": "090-3477-5411", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "清泉寺", "yomi": "せいせんじ", "address": "四日市場1129", "tel": "0554-43-3920", "fax": "0554-43-7886", "mobile": "090-3209-2721", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長慶寺", "yomi": "ちょうけいじ", "address": "夏狩240", "tel": "0554-43-3663", "fax": "", "mobile": "080-9977-7588", "sect": "臨済宗妙心寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "専念寺", "yomi": "せんねんじ", "address": "中央4-3-6", "tel": "0554-43-2904", "fax": "0554-43-2994", "mobile": "090-7264-7711", "sect": "真宗大谷派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "長安寺", "yomi": "ちょうあんじ", "address": "上谷3-6-30", "tel": "0554-43-0850", "fax": "0554-43-0845", "mobile": "", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "善導寺兼務"}, {"area": "都留・大月", "name": "東漸寺", "yomi": "とうぜんじ", "address": "都留市中央4-3-1", "tel": "0554-43-3679", "fax": "", "mobile": "", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": ""}, {"area": "都留・大月", "name": "無辺寺", "yomi": "むへんじ", "address": "大月2-9-20", "tel": "0554-23-1745", "fax": "", "mobile": "090-3346-5524", "sect": "浄土宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "阿弥陀寺兼務"}, {"area": "紹介", "name": "慈照寺", "yomi": "じしょうじ", "address": "南巨摩郡身延町伊沼25", "tel": "0556-42-2439", "fax": "", "mobile": "090-7724-2266", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "よりそうお坊さん"}, {"area": "紹介", "name": "法善寺", "yomi": "ほうぜんじ", "address": "南アルプス市落合2099", "tel": "", "fax": "", "mobile": "090-2101-7676", "sect": "日蓮宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "小さなお葬式"}, {"area": "紹介", "name": "慈光院（甲府）", "yomi": "じこういん", "address": "甲府市徳行4-8-1", "tel": "055-237-7288", "fax": "", "mobile": "090-8209-8866", "sect": "臨済宗", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "小さなお葬式"}, {"area": "紹介", "name": "福應寺", "yomi": "ふくおうじ", "address": "甲州市塩山竹森798", "tel": "0553-33-3273", "fax": "0553-32-1338", "mobile": "090-1804-1856", "sect": "浄土真宗本願寺派", "kyonen": "", "kakimono": "", "todokesaki": "", "nokan": "", "notes": "よりそうお坊さん"}];
 
 let currentArea = '全域';
 let editMode = false;
 let jushokuEdits = {};
 try { jushokuEdits = JSON.parse(localStorage.getItem('jushokuEdits')||'{}'); } catch(e){}
+let jushokuNewEntries = [];
+try { jushokuNewEntries = JSON.parse(localStorage.getItem('jushokuNewEntries')||'[]'); } catch(e){}
 
 const NAV_MAP = {'p-top':'nav-top','p-shiko':'nav-shiko','p-jushoku':'nav-jushoku','p-ostudy':'nav-ostudy'};
 
@@ -1230,6 +1278,7 @@ function goPage(id) {
   else if(id==='p-jushoku') document.body.classList.add('theme-jushoku');
   // p-ostudy / p-quiz はテーマクラスなし＝既存の配色のまま（お勉強エリアは変更しない）
   if(id==='p-jushoku') renderJushoku();
+  if(id==='p-db'){ renderDbAreaMaster(); renderDbTable(); }
   if(id==='p-quiz') {
     document.querySelectorAll('.quiz-page').forEach(p=>p.classList.remove('active'));
     document.getElementById('topPage').classList.add('active');
@@ -1356,12 +1405,36 @@ function toggleEdit(){
   renderJushoku();
 }
 function saveEdit(idx,field,val){
+  if(idx<0){
+    var ni=-idx-1;
+    if(!jushokuNewEntries[ni]) jushokuNewEntries[ni]={};
+    jushokuNewEntries[ni][field]=val;
+    try{localStorage.setItem('jushokuNewEntries',JSON.stringify(jushokuNewEntries));}catch(e){}
+    return;
+  }
   if(!jushokuEdits[idx]) jushokuEdits[idx]={};
   jushokuEdits[idx][field]=val;
   try{localStorage.setItem('jushokuEdits',JSON.stringify(jushokuEdits));}catch(e){}
 }
+function addNewJushoku(){
+  jushokuNewEntries.push({area:(typeof currentArea!=='undefined'&&currentArea!=='全域')?currentArea:((typeof getEffectiveAreas==='function'&&getEffectiveAreas()[0])||''),name:'新規寺院',yomi:'',address:'',tel:'',fax:'',mobile:'',sect:'',kyonen:'',kakimono:'',todokesaki:'',nokan:'',notes:''});
+  try{localStorage.setItem('jushokuNewEntries',JSON.stringify(jushokuNewEntries));}catch(e){}
+  editMode=true;
+  var btn=document.getElementById('edit-toggle');
+  if(btn) btn.textContent='✅ 編集完了';
+  if(typeof renderJushoku==='function') renderJushoku();
+  if(typeof renderDbTable==='function') renderDbTable();
+}
+function deleteNewJushoku(idx){
+  if(!confirm('この新規寺院を削除しますか？')) return;
+  var ni=-idx-1;
+  jushokuNewEntries.splice(ni,1);
+  try{localStorage.setItem('jushokuNewEntries',JSON.stringify(jushokuNewEntries));}catch(e){}
+  if(typeof renderJushoku==='function') renderJushoku();
+  if(typeof renderDbTable==='function') renderDbTable();
+}
 function exportJSON(){
-  const merged=JUSHOKU_DATA.map((t,i)=>Object.assign({},t,jushokuEdits[i]||{}));
+  const merged=JUSHOKU_DATA.map((t,i)=>Object.assign({},t,jushokuEdits[i]||{})).concat(jushokuNewEntries);
   const blob=new Blob([JSON.stringify(merged,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='jushoku_edited.json'; a.click();
@@ -1638,7 +1711,7 @@ function renderShikiten() {
 // ============================================================
 // ② 司式者情報: エリア管理
 // ============================================================
-var jushokuAreaEdits = {customAreas:[], areaOverrides:{}, areaRenames:{}, deletedAreas:[], areaOrder:[]};
+var jushokuAreaEdits = {customAreas:[{"name":"忍野"},{"name":"忍野・山中方面"}], areaOverrides:{"承天寺":"忍野","東圓寺":"忍野","寿徳寺":"忍野"}, areaRenames:{"河口湖":"河口・鳴沢方面・西湖・本栖湖・精進湖","西桂":"西桂・東桂","忍野":"忍野・山中方面"}, deletedAreas:["忍野"], areaOrder:[]};
 try { var _ae = localStorage.getItem('jushokuAreaEdits'); if (_ae) jushokuAreaEdits = JSON.parse(_ae); } catch(e) {}
 if (!jushokuAreaEdits.areaOrder) jushokuAreaEdits.areaOrder = [];
 
@@ -1712,6 +1785,8 @@ function moveArea(key, dir) {
   renderAreaMgrList();
   renderAreaTabs();
   renderJushoku();
+  renderDbAreaMaster();
+  renderDbTable();
 }
 
 function renameArea(orig, newName) {
@@ -1721,6 +1796,8 @@ function renameArea(orig, newName) {
   renderAreaTabs();
   if (currentArea === orig) currentArea = newName.trim();
   renderJushoku();
+  renderDbAreaMaster();
+  renderDbTable();
 }
 
 function deleteArea(name) {
@@ -1732,6 +1809,8 @@ function deleteArea(name) {
   currentArea = areas[0] || '全域';
   renderAreaTabs();
   renderJushoku();
+  renderDbAreaMaster();
+  renderDbTable();
 }
 
 function addCustomArea() {
@@ -1743,6 +1822,39 @@ function addCustomArea() {
   saveAreaEdits();
   renderAreaMgrList();
   renderAreaTabs();
+  renderDbAreaMaster();
+}
+
+// ============================================================
+// データベース管理ページ: 地域マスタ表示（既存のjushokuAreaEditsをそのまま参照＝マスタ一元化）
+// ============================================================
+function renderDbAreaMaster() {
+  var el = document.getElementById('db-area-list');
+  if (!el) return;
+  var all = getOrderedAreaKeys().filter(function(a) { return !jushokuAreaEdits.deletedAreas.includes(a); });
+  el.innerHTML = all.map(function(a, i) {
+    var dn = jushokuAreaEdits.areaRenames[a] || a;
+    return '<div class="area-mgr-row">'
+      + '<div class="area-mgr-arrows">'
+      + '<button class="ebtn sm" data-a="' + a.replace(/"/g,'&quot;') + '" onclick="moveArea(this.dataset.a,-1)"' + (i===0?' disabled':'') + '>▲</button>'
+      + '<button class="ebtn sm" data-a="' + a.replace(/"/g,'&quot;') + '" onclick="moveArea(this.dataset.a,1)"' + (i===all.length-1?' disabled':'') + '>▼</button>'
+      + '</div>'
+      + '<input value="' + dn.replace(/"/g,'&quot;') + '" data-orig="' + a.replace(/"/g,'&quot;') + '" onblur="renameArea(this.dataset.orig,this.value)" style="flex:1;border:1px solid #ddd;border-radius:6px;padding:4px 8px;font-size:.83rem;font-family:inherit;background:#fff;box-sizing:border-box">'
+      + '<button class="ebtn dan sm" data-a="' + a.replace(/"/g,'&quot;') + '" onclick="deleteArea(this.dataset.a)">🗑</button>'
+      + '</div>';
+  }).join('');
+}
+
+function addCustomAreaDb() {
+  var inp = document.getElementById('db-area-new-name');
+  var name = (inp.value || '').trim();
+  if (!name) return;
+  jushokuAreaEdits.customAreas.push({name:name});
+  inp.value = '';
+  saveAreaEdits();
+  renderAreaMgrList();
+  renderAreaTabs();
+  renderDbAreaMaster();
 }
 
 // renderJushoku: areaOverrides+areaRenames を反映するよう上書き
@@ -1753,8 +1865,16 @@ function renderJushoku() {
     var origArea = t.area;
     var area = jushokuAreaEdits.areaOverrides[t.name] || origArea;
     var dispArea = jushokuAreaEdits.areaRenames[area] || area;
-    return Object.assign({}, t, ed, {_idx:i, area:dispArea});
+    return Object.assign({}, t, ed, {_idx:i, area:dispArea, _isNew:false});
   });
+  var newList = jushokuNewEntries.map(function(t, ni) {
+    var idx = -ni - 1;
+    var origArea = t.area || '';
+    var area = jushokuAreaEdits.areaOverrides[t.name] || origArea;
+    var dispArea = jushokuAreaEdits.areaRenames[area] || area;
+    return Object.assign({}, t, {_idx:idx, area:dispArea, _isNew:true});
+  });
+  list = list.concat(newList);
   if (currentArea !== '全域') list = list.filter(function(t) { return t.area === currentArea; });
   if (q) list = list.filter(function(t) { return ['name','address','sect'].some(function(k) { return (t[k]||'').toLowerCase().includes(q); }); });
   var el = document.getElementById('j-list');
@@ -1788,10 +1908,10 @@ function mkJCard(t) {
   var editForm = '';
   if (editMode) {
     var areas = getEffectiveAreas();
-    var baseArea = jushokuAreaEdits.areaOverrides[nm] || JUSHOKU_DATA[i].area || '';
-    var curArea = jushokuAreaEdits.areaRenames[baseArea] || baseArea;
+    var curArea = t.area || '';
     var areaOpts = areas.map(function(a) { return '<option value="' + a.replace(/"/g,'&quot;') + '"' + (a === curArea ? ' selected' : '') + '>' + a + '</option>'; }).join('');
     editForm = '<div class="tdetail open">'
+      + (t._isNew ? '<div class="fg"><label>寺院名</label><input class="efield" value="' + nm.replace(/"/g,'&quot;') + '" onchange="saveEdit(' + i + ',\'name\',this.value);renderJushoku();renderDbTable();"></div>' : '')
       + '<div class="fg"><label>電話</label><input class="efield" value="' + tel + '" onchange="saveEdit(' + i + ',\'tel\',this.value)"></div>'
       + '<div class="fg"><label>携帯</label><input class="efield" value="' + cell + '" onchange="saveEdit(' + i + ',\'mobile\',this.value)"></div>'
       + '<div class="fg"><label>FAX</label><input class="efield" value="' + fax + '" onchange="saveEdit(' + i + ',\'fax\',this.value)"></div>'
@@ -1799,10 +1919,11 @@ function mkJCard(t) {
       + '<div class="fg"><label>書き物</label><input class="efield" value="' + kaki + '" onchange="saveEdit(' + i + ',\'kakimono\',this.value)"></div>'
       + '<div class="fg"><label>備考</label><textarea class="efield" rows="2" onchange="saveEdit(' + i + ',\'notes\',this.value)">' + note + '</textarea></div>'
       + '<div class="fg"><label>エリア移動</label><select class="efield" data-n="' + nm.replace(/"/g,'&quot;') + '" onchange="moveToArea(this.dataset.n,this.value)">' + areaOpts + '</select></div>'
+      + (t._isNew ? '<button class="ebtn dan sm" style="margin-top:8px" onclick="deleteNewJushoku(' + i + ')">🗑 この新規寺院を削除</button>' : '')
       + '</div>';
   }
   return '<div class="tcard">'
-    + '<div class="tname">' + nm + '</div>'
+    + '<div class="tname">' + nm + (t._isNew ? ' <span style="font-size:.7rem;color:var(--gd);font-weight:700">NEW</span>' : '') + '</div>'
     + (sect ? '<div class="tsect">' + sect + '</div>' : '')
     + '<div class="tcontacts">' + chips + '</div>'
     + (detail ? '<button class="exp-btn" onclick="toggleDetail(\'td-' + i + '\',this)">詳細を見る ▼</button>'
@@ -1816,6 +1937,62 @@ function moveToArea(name, newArea) {
   Object.entries(jushokuAreaEdits.areaRenames).forEach(function(e) { if (e[1] === newArea) origArea = e[0]; });
   jushokuAreaEdits.areaOverrides[name] = origArea;
   saveAreaEdits();
+  renderDbTable();
+}
+
+// ============================================================
+// データベース管理ページ: 司式者情報Excel風テーブル
+// ============================================================
+var DB_COLS = [
+  ['name','寺院名'], ['area','エリア'], ['sect','宗派'], ['address','住所'],
+  ['tel','電話'], ['mobile','携帯'], ['fax','FAX'], ['kyonen','享年'],
+  ['kakimono','書き物'], ['todokesaki','届け先'], ['nokan','納棺'], ['notes','備考']
+];
+function dbSaveCell(elm) {
+  var i = parseInt(elm.dataset.i, 10), f = elm.dataset.f;
+  saveEdit(i, f, elm.value);
+}
+function renderDbTable() {
+  var tbl = document.getElementById('db-table');
+  if (!tbl) return;
+  var q = ((document.getElementById('db-search') || {}).value || '').toLowerCase();
+  var areas = getEffectiveAreas();
+  var rows = JUSHOKU_DATA.map(function(t, i) {
+    var ed = jushokuEdits[i] || {};
+    return Object.assign({}, t, ed, {_idx:i, _isNew:false});
+  });
+  var newRows = jushokuNewEntries.map(function(t, ni) {
+    return Object.assign({}, t, {_idx:-ni - 1, _isNew:true});
+  });
+  rows = rows.concat(newRows);
+  if (q) rows = rows.filter(function(t) { return ['name','address','sect'].some(function(k) { return (t[k]||'').toLowerCase().includes(q); }); });
+  var thead = '<thead><tr>' + DB_COLS.map(function(c) { return '<th>' + c[1] + '</th>'; }).join('') + '<th>操作</th></tr></thead>';
+  var tbody = '<tbody>' + rows.map(function(t) {
+    var i = t._idx;
+    return '<tr>' + DB_COLS.map(function(c) {
+      var key = c[0];
+      if (key === 'name') {
+        if (t._isNew) {
+          var escN = String(t.name||'').replace(/"/g,'&quot;');
+          return '<td><input class="db-input" value="' + escN + '" data-i="' + i + '" data-f="name" onchange="dbSaveCell(this);renderDbTable();renderJushoku();"></td>';
+        }
+        return '<td class="db-cell-ro">' + (t.name||'') + '</td>';
+      }
+      if (key === 'area') {
+        var baseArea = jushokuAreaEdits.areaOverrides[t.name] || t.area || '';
+        var curArea = jushokuAreaEdits.areaRenames[baseArea] || baseArea;
+        var opts = areas.map(function(a) { return '<option value="' + a.replace(/"/g,'&quot;') + '"' + (a===curArea?' selected':'') + '>' + a + '</option>'; }).join('');
+        return '<td><select class="db-input" data-n="' + (t.name||'').replace(/"/g,'&quot;') + '" onchange="moveToArea(this.dataset.n,this.value)">' + opts + '</select></td>';
+      }
+      var val = t[key] || '';
+      var esc = String(val).replace(/"/g,'&quot;');
+      if (key === 'notes' || key === 'kakimono') {
+        return '<td><textarea class="db-input" rows="2" data-i="' + i + '" data-f="' + key + '" onchange="dbSaveCell(this)">' + val + '</textarea></td>';
+      }
+      return '<td><input class="db-input" value="' + esc + '" data-i="' + i + '" data-f="' + key + '" onchange="dbSaveCell(this)"></td>';
+    }).join('') + '<td>' + (t._isNew ? '<button class="ebtn dan sm" onclick="deleteNewJushoku(' + i + ')">🗑</button>' : '') + '</td></tr>';
+  }).join('') + '</tbody>';
+  tbl.innerHTML = thead + tbody;
 }
 
 // ============================================================
@@ -2115,6 +2292,7 @@ function exportAllEdits() {
     _version: 1,
     shikitenEdits: shikitenEdits,
     jushokuEdits: jushokuEdits,
+    jushokuNewEntries: jushokuNewEntries,
     jushokuAreaEdits: jushokuAreaEdits,
     studyEdits: {
       flashCards: _flashCardsWork || studyEdits.flashCards,
@@ -2159,6 +2337,10 @@ function importAllEdits() {
     if (data.jushokuEdits) {
       jushokuEdits = data.jushokuEdits;
       localStorage.setItem('jushokuEdits', JSON.stringify(jushokuEdits));
+    }
+    if (data.jushokuNewEntries) {
+      jushokuNewEntries = data.jushokuNewEntries;
+      localStorage.setItem('jushokuNewEntries', JSON.stringify(jushokuNewEntries));
     }
     if (data.jushokuAreaEdits) {
       jushokuAreaEdits = data.jushokuAreaEdits;
@@ -5128,4 +5310,263 @@ function startQuiz(){
   renderQuestion();
 }
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function spre
+function spreadShuffle(arr){
+  // チャプターごとにバケツ分けしてシャッフル
+  const buckets={};
+  arr.forEach(q=>{if(!buckets[q.chapter])buckets[q.chapter]=[];buckets[q.chapter].push(q);});
+  const chs=shuffle(Object.keys(buckets));
+  chs.forEach(ch=>{buckets[ch]=shuffle(buckets[ch]);});
+  // ラウンドロビンでインターリーブ（同チャプターが連続しない）
+  const result=[];
+  let maxLen=Math.max(...chs.map(ch=>buckets[ch].length));
+  for(let i=0;i<maxLen;i++){
+    const roundChs=shuffle(chs); // 各ラウンドもランダム順
+    for(const ch of roundChs){if(i<buckets[ch].length)result.push(buckets[ch][i]);}
+  }
+  return result;
+}
+
+function renderQuestion(){
+  const q=state.questions[state.current];
+  const total=state.questions.length;
+  document.getElementById('qNum').textContent='問 '+(state.current+1)+' / '+total;
+  document.getElementById('progressFill').style.width=((state.current+1)/total*100).toFixed(1)+'%';
+  document.getElementById('modeTag').textContent=state.mode==='basic'?'基本':'上級';
+  const chMap={1:'Ch1｜葬儀概論',2:'Ch2｜仏教儀礼',3:'Ch3｜神道儀礼',4:'Ch4｜キリスト教・その他',5:'Ch5｜法令',6:'Ch6｜マナー・礼儀',7:'Ch7｜接客・実務',8:'Ch8｜設備・衛生',9:'Ch9｜歴史・儀礼作法',10:'Ch10｜法令・マナー難問',11:'Ch11｜グリーフケア',12:'Ch12｜法令（基本）',13:'Ch13｜接客・実務応用',14:'Ch14｜設備・衛生応用',15:'Ch15｜法令深掘り',16:'Ch16｜仏教宗派の歴史',17:'Ch17｜葬儀の歴史'};
+  const catEl=document.getElementById('questionCategory');
+  if(catEl) catEl.textContent=chMap[q.chapter]||'Ch'+q.chapter;
+  const badge=document.getElementById('typeBadge');
+  badge.textContent=q.type==='ox'?'○×問題':'4択問題';
+  badge.className='q-type-badge '+(q.type==='ox'?'ox':'four');
+  document.getElementById('questionText').textContent=q.text;
+  state.selectedChoice=null;
+  const choicesArea=document.getElementById('choicesArea');
+  const answerArea=document.getElementById('answerArea');
+  document.getElementById('feedbackArea').style.display='none';
+  if(q.type==='ox'){
+    choicesArea.style.display='none';
+    answerArea.style.display='block';
+    document.getElementById('answerAreaLabel').textContent='あなたの答えは？';
+    document.getElementById('btnO').innerHTML='○<br><span style="font-size:.68rem">確信</span>';
+    document.getElementById('btnD').innerHTML='△<br><span style="font-size:.68rem">あいまい○</span>';
+    document.getElementById('btnX').innerHTML='×<br><span style="font-size:.68rem">誤り</span>';
+    document.getElementById('btnX').style.display='flex';
+    ['btnO','btnD','btnX'].forEach(id=>{document.getElementById(id).disabled=false;});
+  }else{
+    const labels=['ア','イ','ウ','エ'];
+    choicesArea.style.display='grid';
+    answerArea.style.display='none';
+    choicesArea.innerHTML=q.choices.map((c,i)=>'<button class="choice-btn" onclick="selectChoice('+i+')"><span class="clabel">'+labels[i]+'.</span>'+c+'</button>').join('');
+  }
+}
+
+function selectChoice(idx){
+  state.selectedChoice=idx;
+  document.querySelectorAll('.choice-btn').forEach((b,i)=>{b.className='choice-btn'+(i===idx?' selected':'');});
+  const answerArea=document.getElementById('answerArea');
+  answerArea.style.display='block';
+  document.getElementById('answerAreaLabel').textContent='確信度は？';
+  document.getElementById('btnO').innerHTML='○<br><span style="font-size:.68rem">確信</span>';
+  document.getElementById('btnD').innerHTML='△<br><span style="font-size:.68rem">あいまい</span>';
+  document.getElementById('btnX').style.display='none';
+  ['btnO','btnD'].forEach(id=>{document.getElementById(id).disabled=false;});
+}
+
+function submitAnswer(confidence){
+  const q=state.questions[state.current];
+  let userAns,correct;
+  if(q.type==='ox'){
+    userAns=(confidence==='o'||confidence==='d')?0:1;
+    correct=(userAns===q.answer);
+  }else{
+    userAns=state.selectedChoice;
+    correct=(userAns===q.answer);
+  }
+  const isAmbi=(confidence==='d');
+  state.results.push({q,confidence,correct,isAmbi,selectedChoice:state.selectedChoice});
+  ['btnO','btnD','btnX'].forEach(id=>{document.getElementById(id).disabled=true;});
+  if(q.type!=='ox'){
+    document.querySelectorAll('.choice-btn').forEach((b,i)=>{
+      b.onclick=null;
+      if(i===q.answer)b.classList.add('correct');
+      else if(i===state.selectedChoice&&!correct)b.classList.add('wrong');
+    });
+  }
+  const fc=document.getElementById('feedbackCard');
+  const correctAns=q.type==='ox'?(q.answer===0?'○（正しい）':'×（誤り）'):['ア','イ','ウ','エ'][q.answer];
+  if(isAmbi){
+    fc.className='feedback-card feedback-ambi';
+    document.getElementById('feedIcon').textContent=correct?'⚠️':'⚠️';
+    document.getElementById('feedTitle').textContent=correct?'✅ 正解！（△要見直しフラグ）':'❌ 不正解（△要見直しフラグ）';
+    document.getElementById('feedTitle').style.color=correct?'#f57f17':'#c62828';
+  }else if(correct){
+    fc.className='feedback-card feedback-correct';
+    document.getElementById('feedIcon').textContent='🎉';
+    document.getElementById('feedTitle').textContent='正解！素晴らしい！';
+    document.getElementById('feedTitle').style.color='#2e7d32';
+  }else{
+    fc.className='feedback-card feedback-wrong';
+    document.getElementById('feedIcon').textContent='😥';
+    document.getElementById('feedTitle').textContent='不正解… 正解は「'+correctAns+'」';
+    document.getElementById('feedTitle').style.color='#c62828';
+  }
+  document.getElementById('feedExp').textContent=q.explanation||'';
+  document.getElementById('feedbackArea').style.display='block';
+  document.getElementById('answerArea').style.display='none';
+  setTimeout(()=>{const el=document.getElementById('feedbackArea');if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+}
+
+function nextQuestion(){
+  state.current++;
+  if(state.current>=state.questions.length){showResult();}
+  else{renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function confirmQuit(){if(confirm('テストを終了しますか？ここまでの結果を保存します。')){showResult();}}
+
+/* RESULT */
+function showResult(){
+  const results=state.results;
+  const total=results.length;
+  const correctCount=results.filter(r=>r.correct).length;
+  const ambiCount=results.filter(r=>r.isAmbi).length;
+  const wrongCount=results.filter(r=>!r.correct).length;
+  const score=total?Math.round(correctCount/total*100):0;
+  document.getElementById('resultScoreNum').textContent=score;
+  document.getElementById('resultTitle').textContent=score>=90?'🏆 素晴らしい！':score>=70?'👍 よくできました！':score>=50?'📚 復習しましょう！':'💪 頑張りましょう！';
+  document.getElementById('resultSub').textContent=(state.mode==='basic'?'基本':'上級')+'問題 '+total+'問 挑戦';
+  document.getElementById('statCorrect').textContent=correctCount;
+  document.getElementById('statAmbi').textContent=ambiCount;
+  document.getElementById('statWrong').textContent=wrongCount;
+  const labels=['ア','イ','ウ','エ'];
+  const ambiResults=results.filter(r=>r.isAmbi);
+  const revSec=document.getElementById('reviewSection');
+  if(ambiResults.length){
+    revSec.style.display='block';
+    document.getElementById('reviewList').innerHTML=ambiResults.map((r,i)=>{
+      const q=r.q;
+      const correctAns=q.type==='ox'?(q.answer===0?'○':'×'):labels[q.answer];
+      const yourAns=q.type==='ox'?(r.confidence==='x'?'×':'○（あいまい）'):labels[r.selectedChoice]+'（あいまい）';
+      return '<div class="review-item"><div class="rq">'+(i+1)+'. '+q.text.slice(0,55)+(q.text.length>55?'…':'')+'</div><div class="ra">あなた:'+yourAns+' / 正解:'+correctAns+' / '+(r.correct?'✅正解':'❌不正解')+'</div><div style="font-size:.78rem;color:#555;margin-top:3px">'+(q.explanation||'')+'</div></div>';
+    }).join('');
+  }else{revSec.style.display='none';}
+  const wrongResults=results.filter(r=>!r.correct);
+  document.getElementById('wrongList').innerHTML=wrongResults.length?wrongResults.slice(0,20).map((r,i)=>{
+    const q=r.q;
+    const correctAns=q.type==='ox'?(q.answer===0?'○（正しい）':'×（誤り）'):labels[q.answer]+'. '+q.choices[q.answer];
+    return '<div class="review-item wrong-item"><div class="rq">'+(i+1)+'. '+q.text.slice(0,55)+(q.text.length>55?'…':'')+'</div><div class="ra">正解: '+correctAns+'</div><div style="font-size:.78rem;color:#555;margin-top:3px">'+(q.explanation||'')+'</div></div>';
+  }).join('')+(wrongResults.length>20?'<div style="text-align:center;color:#aaa;font-size:.83rem;margin-top:6px">他 '+(wrongResults.length-20)+'問…</div>':''):'<div style="text-align:center;color:#aaa;padding:12px;font-size:.88rem">不正解なし！完璧です🎉</div>';
+  const now=new Date();
+  const dateStr=now.getFullYear()+'/'+(String(now.getMonth()+1).padStart(2,'0'))+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const store=loadStore();
+  if(!store.history)store.history=[];
+  store.history.push({date:dateStr,mode:state.mode,count:total,score,correct:correctCount,ambi:ambiCount,wrong:wrongCount});
+  if(store.history.length>50)store.history=store.history.slice(-50);
+  saveStore(store);
+  showPage('resultPage');
+}
+function retryQuiz(){startQuiz();}
+
+/* HISTORY */
+function renderHistory(){
+  const store=loadStore();
+  const history=(store.history||[]).slice().reverse();
+  const el=document.getElementById('historyList');
+  if(!history.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:40px;font-size:.9rem">まだ学習履歴がありません</div>';return;}
+  el.innerHTML=history.map((h,i)=>'<div class="history-item" style="margin:0 0 10px;padding:14px 16px;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:.78rem;color:#888">'+h.date+'</div><span style="font-size:.73rem;font-weight:700;padding:2px 10px;border-radius:20px;background:'+(h.mode==='basic'?'#e3f0ff':'#fff3e0')+';color:'+(h.mode==='basic'?'#1565c0':'#e65100')+'">'+(h.mode==='basic'?'基本':'上級')+' '+h.count+'問</span></div><div style="margin-top:6px"><span style="font-size:1.35rem;font-weight:900;color:#c44dff">'+h.score+'点</span><span style="font-size:.83rem;color:#888;margin-left:8px">'+h.correct+'/'+h.count+'正解</span></div><div style="font-size:.78rem;color:#888;margin-top:2px">⚠️要見直し:'+h.ambi+'問 ❌不正解:'+h.wrong+'問</div></div>').join('');
+}
+function clearHistory(){
+  if(confirm('学習履歴をすべて削除しますか？')){
+    const store=loadStore();
+    store.history=[];
+    saveStore(store);
+    renderHistory();
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{renderTop();updateReportCard();});
+
+/* REPORT */
+const REPORT_KEY='sosaiQuizApp_reports';
+
+function reportQuestion(){
+  const q=state.questions[state.current];
+  if(!q)return;
+  const chMap={1:'Ch1｜葬儀概論',2:'Ch2｜仏教儀礼',3:'Ch3｜神道儀礼',4:'Ch4｜キリスト教・その他',5:'Ch5｜法令',6:'Ch6｜マナー・礼儀',7:'Ch7｜接客・実務',8:'Ch8｜設備・衛生',9:'Ch9｜歴史・儀礼作法',10:'Ch10｜法令・マナー難問',11:'Ch11｜グリーフケア',12:'Ch12｜法令（基本）',13:'Ch13｜接客・実務応用',14:'Ch14｜設備・衛生応用',15:'Ch15｜法令深掘り',16:'Ch16｜仏教宗派の歴史',17:'Ch17｜葬儀の歴史'};
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  const correctAns=q.type==='ox'?(q.answer===0?'○（正しい）':'×（誤り）'):['ア','イ','ウ','エ'][q.answer];
+  const entry={
+    date:new Date().toLocaleDateString('ja-JP'),
+    chapter:chMap[q.chapter]||('Ch'+q.chapter),
+    type:q.type==='ox'?'○×問題':'4択問題',
+    text:q.text,
+    answer:correctAns,
+    explanation:q.explanation||''
+  };
+  if(!reports.find(r=>r.text===entry.text)){
+    reports.push(entry);
+    localStorage.setItem(REPORT_KEY,JSON.stringify(reports));
+  }
+  const btn=document.getElementById('reportBtn');
+  if(btn){btn.textContent='✅ 報告しました';btn.classList.add('reported');}
+  updateReportCard();
+}
+
+function updateReportCard(){
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  const card=document.getElementById('reportCardHome');
+  const cnt=document.getElementById('reportCountHome');
+  if(!card)return;
+  if(reports.length>0){
+    card.style.display='block';
+    if(cnt)cnt.textContent='現在 '+reports.length+' 件の報告があります';
+  }else{
+    card.style.display='none';
+  }
+}
+
+function showReportModal(){
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  const list=document.getElementById('reportList');
+  if(reports.length===0){
+    list.innerHTML='<p style="text-align:center;color:#aaa;padding:24px">報告された問題はありません</p>';
+  }else{
+    list.innerHTML=reports.map((r,i)=>
+      '<div style="border:1px solid #eee;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:.82rem">'+
+      '<div style="color:#999;margin-bottom:5px">'+(i+1)+'. '+r.date+' | '+r.chapter+' | '+r.type+'</div>'+
+      '<div style="margin-bottom:4px"><b>問題:</b> '+r.text+'</div>'+
+      '<div style="margin-bottom:4px"><b>現在の正解設定:</b> '+r.answer+'</div>'+
+      '<div style="color:#555"><b>解説:</b> '+r.explanation+'</div>'+
+      '</div>'
+    ).join('');
+  }
+  document.getElementById('reportModal').style.display='flex';
+}
+
+function copyReports(){
+  const reports=JSON.parse(localStorage.getItem(REPORT_KEY)||'[]');
+  if(!reports.length){alert('報告された問題がありません');return;}
+  const text='【報告問題一覧】\n\n'+reports.map((r,i)=>
+    (i+1)+'. ['+r.date+'] '+r.chapter+' '+r.type+'\n'+
+    '問題: '+r.text+'\n'+
+    '現在の正解設定: '+r.answer+'\n'+
+    '解説: '+r.explanation
+  ).join('\n\n');
+  navigator.clipboard.writeText(text)
+    .then(()=>alert('コピーしました！\nClaudeのチャットに貼り付けて「この問題を修正して」と送ってください。'))
+    .catch(()=>{
+      const ta=document.createElement('textarea');
+      ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+      alert('コピーしました！');
+    });
+}
+
+function clearReports(){
+  if(confirm('報告一覧をすべて削除しますか？')){
+    localStorage.removeItem(REPORT_KEY);
+    showReportModal();
+    updateReportCard();
+  }
+}
+</script>
+</body>
+</html>
